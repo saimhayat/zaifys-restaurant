@@ -1,0 +1,228 @@
+/* ===================================================
+   ZAIFY'S RESTAURANT — ABOUT SECTION STYLESHEET
+   =================================================== */
+
+/* Container Grid Layout */
+.about__grid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: clamp(3rem, 8vw, 6rem);
+  align-items: center;
+}
+
+/* Media Column */
+.about__media-wrapper {
+  position: relative;
+  padding: 1.5rem;
+}
+
+.about__media-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 85%;
+  height: 85%;
+  border: 3px solid var(--color-secondary, #ffc700);
+  border-radius: var(--radius-lg, 12px);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.about__media {
+  position: relative;
+  z-index: 2;
+  border-radius: var(--radius-lg, 12px);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: transform .6s cubic-bezier(.25,1,.5,1);
+}
+
+.about__media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4/5;
+  object-fit: cover;
+  transition: transform .8s cubic-bezier(.25,1,.5,1);
+}
+
+.about__media-wrapper:hover .about__media img {
+  transform: scale(1.05);
+}
+
+.about__media-wrapper:hover .about__media {
+  transform: translateY(-4px);
+}
+
+/* Floating Badge */
+.about__media-tag {
+  position: absolute;
+  left: 1.5rem;
+  bottom: 2rem;
+  background: var(--color-secondary, #ffc700);
+  color: #000;
+  padding: 1rem 1.5rem;
+  border-radius: 4px;
+  border: 2px solid #000;
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+  box-shadow:
+      6px 6px 0 #000,
+      0 10px 25px rgba(255,199,0,.35);
+  z-index: 3;
+  transform: rotate(-3deg);
+  transition: .3s;
+}
+
+.about__media-wrapper:hover .about__media-tag {
+  transform: rotate(0) scale(1.04);
+}
+
+.about__media-tag-num {
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.about__media-tag-text {
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-weight: 800;
+}
+
+/* Text */
+.about__text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .2em;
+  font-weight: 700;
+  color: var(--color-secondary,#ffc700);
+  margin-bottom: .75rem;
+}
+
+.section-heading {
+  font-size: clamp(1.8rem,4vw,2.75rem);
+  line-height: 1.15;
+  margin-bottom: 1.5rem;
+  color: #fff;
+}
+
+.about__description {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.about__lead {
+  color: var(--color-text-muted,#9e9e9e);
+  font-size: 1.05rem;
+  line-height: 1.65;
+}
+
+/* ===================================
+   Feature Points
+=================================== */
+
+.about__points {
+  list-style: none;
+  margin: 2.5rem 0 0;
+  padding: 0;
+
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.about__point-item {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  color: #fff;
+  font-weight: 600;
+}
+
+.about__point-icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  background: var(--color-secondary,#ffc700);
+  color: #000;
+  border-radius: 50%;
+  padding: 4px;
+}
+
+/* Tablet */
+
+@media (max-width:992px){
+
+  .about__grid{
+      grid-template-columns:1fr;
+      gap:3.5rem;
+  }
+
+  .about__media-wrapper{
+      width:100%;
+      max-width:600px;
+      margin:auto;
+  }
+
+  .about__media img{
+      aspect-ratio:16/11;
+  }
+}
+
+/* Mobile */
+
+@media (max-width:576px){
+
+  .about__points{
+
+      /* KEEP 4 ITEMS IN ONE ROW */
+      grid-template-columns:repeat(4,1fr);
+
+      gap:.35rem;
+      margin-top:2rem;
+  }
+
+  .about__point-item{
+
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+
+      gap:.45rem;
+
+      font-size:.65rem;
+      line-height:1.25;
+  }
+
+  .about__point-icon{
+
+      width:34px;
+      height:34px;
+      padding:7px;
+  }
+
+  .about__media-tag{
+
+      left:1rem;
+      bottom:1rem;
+      padding:.75rem 1rem;
+  }
+
+  .about__media-tag-num{
+      font-size:1.6rem;
+  }
+
+}

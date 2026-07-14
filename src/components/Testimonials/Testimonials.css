@@ -1,0 +1,233 @@
+/* ===================================================
+   ZAIFY'S RESTAURANT — TESTIMONIALS SECTION STYLESHEET
+   REFACTORED FOR THE DOPE.COM.PK VISUAL IDENTITY
+   =================================================== */
+
+/* ---- Testimonials Base Section ---- */
+.testimonials {
+  background: #000000; /* Solid pitch-black section background */
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid rgba(255, 255, 255, 0.05); /* Clean dark borders */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Base Carousel Stack Layout (Flipped to Dark Mode Setup) */
+.testimonials__carousel {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto 1.5rem auto; /* Bottom margin allows room for stacked layers */
+  background: #121212; /* Elevated dark card layout */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: var(--shadow-card);
+  padding: clamp(2.5rem, 6vw, 4.25rem);
+  overflow: visible; /* Must stay visible to allow bottom shadows & arrows to float */
+}
+
+/* Layered stacked card illusion - bottom layer */
+.testimonials__carousel::before {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 4%;
+  width: 92%;
+  height: 10px;
+  background: #121212;
+  opacity: 0.6;
+  border-radius: 0 0 var(--radius-lg, 12px) var(--radius-lg, 12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Backdrop decorative quote mark overlay */
+.testimonials__quote-mark {
+  position: absolute;
+  top: 2.5rem;
+  left: 2.5rem;
+  color: var(--color-secondary, #ffc700); /* Translucent brand yellow highlight */
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Floating Navigation Arrows */
+.testimonials__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #1a1a1a; /* Clean dark-gray button backdrop */
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.testimonials__nav--prev {
+  left: -23px; /* Hangs halfway off the left card margin */
+}
+
+.testimonials__nav--next {
+  right: -23px; /* Hangs halfway off the right card margin */
+}
+
+.testimonials__nav:hover {
+  background: var(--color-secondary, #ffc700); /* Inverts to vibrant solid yellow on hover */
+  color: #000000; /* Contrast black arrow label */
+  border-color: transparent;
+  box-shadow: 0 6px 16px rgba(255, 199, 0, 0.35);
+}
+
+/* Container targeting the track - cleanly clips horizontal slide leaks */
+.testimonials__track-container {
+  overflow: hidden;
+  width: 100%;
+}
+
+/* Content Slider Track */
+.testimonials__track {
+  display: flex;
+  transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1);
+  transform: translateX(calc(var(--active, 0) * -100%));
+  position: relative;
+  z-index: 2;
+}
+
+.testimonials__slide {
+  flex: 0 0 100%;
+  min-width: 100%;
+}
+
+/* Rating Stars Segment */
+.testimonials__stars {
+  display: flex;
+  gap: 0.35rem;
+  color: var(--color-secondary, #ffc700); /* Highlights review stars in brand yellow */
+  margin-bottom: 1.4rem;
+}
+
+/* Main Blockquote Typography (Swapped serif italic layout with bold sans) */
+.testimonials__quote {
+  font-family: var(--font-body, sans-serif);
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  line-height: 1.55;
+  font-style: italic;
+  font-weight: 500;
+  color: #f5f5f5; /* Flipped reviews color to readable white */
+  margin: 0 0 2rem 0;
+  letter-spacing: -0.01em;
+}
+
+/* Author Details Segment */
+.testimonials__author {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Streetwear Fallback Initial Stamp Avatar */
+.testimonials__avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--color-secondary, #ffc700); /* Solid brand yellow background */
+  border: 2px solid #000000;
+  color: #000000; /* Solid dark text */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display, sans-serif);
+  font-weight: 900; /* Heavy bold initials stamp */
+  font-size: 1.25rem;
+  box-shadow: 2px 2px 0px #ffffff; /* Visual white offset frame */
+  flex-shrink: 0;
+}
+
+.testimonials__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.testimonials__name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #ffffff; /* Flipped reviews name to white */
+  margin: 0;
+}
+
+.testimonials__role {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-muted, #9e9e9e); /* Soft gray role indicator */
+  margin: 0;
+}
+
+/* ---- Navigation Dot Panels ---- */
+.testimonials__dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 2.2rem;
+  position: relative;
+  z-index: 3;
+}
+
+.testimonials__dot {
+  background: rgba(255, 255, 255, 0.15); /* Inactive dark-mode dots */
+  border: none;
+  cursor: pointer;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  padding: 0;
+  transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.testimonials__dot:hover {
+  background: var(--color-secondary, #ffc700);
+}
+
+/* Active selection Pill animation */
+.testimonials__dot--active {
+  width: 26px;
+  border-radius: 999px;
+  background: var(--gradient-gold, linear-gradient(135deg, #ffdb4d, #ffc700)); /* Vibrant signature yellow */
+}
+
+/* ---- Responsive Adaptability ---- */
+@media (max-width: 900px) {
+  /* Hide floating edge arrows on smaller screens to prevent page overflow */
+  .testimonials__nav {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .testimonials__carousel {
+    padding: clamp(2rem, 6vw, 3rem) clamp(1.5rem, 5vw, 2.5rem);
+  }
+  
+  .testimonials__quote-mark {
+    top: 1.75rem;
+    left: 1.75rem;
+    width: 44px;
+    height: 33px;
+  }
+}
+
+@media (max-width: 480px) {
+  .testimonials__quote-mark {
+    display: none;
+  }
+}

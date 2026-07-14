@@ -1,0 +1,259 @@
+/* ===================================================
+   ZAIFY'S RESTAURANT — RESERVATION SECTION STYLESHEET
+   REFACTORED FOR THE DOPE.COM.PK VISUAL IDENTITY
+   =================================================== */
+
+/* ---- Reservation Grid Structure ---- */
+.reservation__grid {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: clamp(2.5rem, 6vw, 4.5rem);
+  align-items: center;
+}
+
+/* Media Column Framings */
+.reservation__media-wrapper {
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.reservation__media-wrapper:hover {
+  transform: translateY(-4px);
+}
+
+.reservation__media {
+  position: relative;
+  border-radius: var(--radius-lg, 12px);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(255, 255, 255, 0.05); /* Clean border framing */
+  background: #121212;
+}
+
+.reservation__media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+
+/* Floating "Sticker" Styled Image Note */
+.reservation__media-note {
+  position: absolute;
+  left: 1.5rem;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  background: rgba(18, 18, 18, 0.85); /* Solid dark translucent backdrop */
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  color: #ffffff;
+  padding: 1.4rem 1.6rem;
+  border-radius: var(--radius-lg, 12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 3px solid var(--color-secondary, #ffc700); /* High contrast yellow indicator */
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  z-index: 2;
+}
+
+.reservation__media-note-eyebrow {
+  display: block;
+  font-family: var(--font-display, sans-serif);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-secondary, #ffc700);
+  margin-bottom: 0.4rem;
+}
+
+.reservation__media-note-text {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+/* ---- Form Panel Styling (Flipped to Dark Mode Setup) ---- */
+.reservation__form-wrap {
+  background: var(--color-card, #121212); /* Elevated dark card container */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: var(--shadow-card);
+  padding: clamp(2rem, 5vw, 3.25rem);
+}
+
+.reservation__form-wrap .section-sub {
+  color: var(--color-text-muted, #9e9e9e);
+  margin-bottom: 2.25rem;
+}
+
+/* Success Validation Panel */
+.reservation__success {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  background: rgba(255, 199, 0, 0.04); /* Translucent signature yellow base */
+  border: 1px dashed var(--color-secondary, #ffc700);
+  color: var(--color-secondary, #ffc700);
+  padding: 1.1rem 1.4rem;
+  border-radius: var(--radius-md, 8px);
+  margin-bottom: 2rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  animation: reservation-fade-in 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes reservation-fade-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reservation__success strong {
+  font-weight: 800;
+  color: #ffffff; /* Flipped success text label to white */
+}
+
+/* Field Configurations */
+.reservation__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.reservation__row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.4rem;
+}
+
+.reservation__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  position: relative;
+}
+
+.reservation__field label {
+  font-family: var(--font-display, sans-serif); /* Swapped classic serif with bold sans */
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #ffffff; /* Inverted label labels to white */
+}
+
+/* Base Form Inputs, Drops and Textareas */
+.reservation__field input,
+.reservation__field select,
+.reservation__field textarea {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md, 8px);
+  padding: 0.85rem 1.1rem;
+  font-size: 0.92rem;
+  color: #ffffff; /* Flipped input input to white */
+  background: #080808; /* Dark base input box backdrop */
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+  transition: border-color 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+              background-color 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+              box-shadow 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  width: 100%;
+}
+
+/* Interactive Focus States */
+.reservation__field input:focus,
+.reservation__field select:focus,
+.reservation__field textarea:focus {
+  border-color: var(--color-secondary, #ffc700);
+  background-color: #181818; /* Keeps the input field elevated charcoal rather than white */
+  box-shadow: 0 0 0 3px rgba(255, 199, 0, 0.15), inset 0 1px 2px rgba(0, 0, 0, 0.5);
+  outline: none;
+}
+
+/* Style adjustment for browser standard select element arrows on dark background */
+.reservation__field select {
+  color-scheme: dark;
+}
+
+.reservation__field textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Invalid Field states */
+.reservation__field input[aria-invalid="true"],
+.reservation__field select[aria-invalid="true"] {
+  border-color: #dc2626; /* Deep crimson indicator */
+  background-color: rgba(220, 38, 38, 0.02);
+}
+
+.reservation__field input[aria-invalid="true"]:focus,
+.reservation__field select[aria-invalid="true"]:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+/* Sliding Error Layout Message */
+.reservation__error {
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #dc2626;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-top: 0.2rem;
+  animation: field-error-enter 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes field-error-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Submission Button Details */
+.reservation__submit {
+  margin-top: 0.6rem;
+  width: 100%;
+  padding: 1.1rem;
+  font-size: 0.92rem;
+  font-weight: 900; /* Heavy weight button label */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: var(--radius-sm, 6px);
+  background: var(--gradient-gold, linear-gradient(135deg, #ffdb4d, #ffc700));
+  color: #000000 !important; /* Force black label for legibility over yellow */
+  box-shadow: var(--shadow-gold, 0 4px 15px rgba(255, 199, 0, 0.25));
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.reservation__submit:hover {
+  background: #ffffff;
+  color: #000000 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
+}
+
+/* ---- Responsive Breakpoints ---- */
+@media (max-width: 992px) {
+  .reservation__grid {
+    grid-template-columns: 1fr;
+    gap: 3.5rem;
+  }
+
+  .reservation__media img {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+@media (max-width: 768px) {
+  .reservation__row {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}

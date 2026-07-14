@@ -1,0 +1,67 @@
+/* ===================================================
+   ZAIFY'S RESTAURANT — STATS BANNER STYLESHEET
+   REFACTORED FOR THE DOPE.COM.PK VISUAL IDENTITY
+   =================================================== */
+
+.stats {
+  background: #000000; /* Flat pitch-black background */
+  background-image: radial-gradient(circle at 20% 20%, rgba(255, 199, 0, 0.04), transparent 55%); /* Brand yellow radial glow */
+  padding: var(--space-xl) 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05); /* Clean section boundaries */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stats__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  border-right: 1px solid rgba(255, 199, 0, 0.15); /* Thin, signature yellow cell dividers */
+}
+
+.stat-item:last-child {
+  border-right: none;
+}
+
+.stat-item__value {
+  font-family: var(--font-display, sans-serif); /* Changed from classic Display serif to bold sans */
+  font-size: clamp(2.2rem, 5vw, 3rem);
+  font-weight: 900; /* Ultra-heavy stats digit stamp */
+  letter-spacing: -0.03em; /* Tight blocky spacing */
+  color: var(--color-secondary, #ffc700); /* Highlights numbers in signature yellow */
+  margin-bottom: 0.4rem;
+}
+
+.stat-item__label {
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.8rem;
+  font-weight: 800; /* Heavy stamp label styling */
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6); /* Translucent clean gray body text */
+}
+
+@media (max-width: 700px) {
+  .stats__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stat-item:nth-child(2) {
+    border-right: none;
+  }
+
+  .stat-item:nth-child(1),
+  .stat-item:nth-child(2) {
+    border-bottom: 1px solid rgba(255, 199, 0, 0.15); /* Match yellow theme on mobile grid breaks */
+    padding-bottom: 1.8rem;
+  }
+
+  .stat-item:nth-child(3),
+  .stat-item:nth-child(4) {
+    padding-top: 1.8rem;
+  }
+}
