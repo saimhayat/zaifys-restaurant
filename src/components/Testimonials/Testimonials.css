@@ -90,17 +90,15 @@
 
 /* Container targeting the track - cleanly clips horizontal slide leaks */
 .testimonials__track-container {
-  overflow: hidden;
-  width: 100%;
+  overflow: hidden; /* 👈 THIS IS THE MAGIC FIX */
+  max-width: 100%;
+  position: relative; /* Good practice for sliders */
 }
 
-/* Content Slider Track */
 .testimonials__track {
   display: flex;
-  transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1);
-  transform: translateX(calc(var(--active, 0) * -100%));
-  position: relative;
-  z-index: 2;
+  transition: transform 0.5s ease; /* Assuming you use transform to slide it */
+  /* Do not put overflow: hidden here, put it on the container above */
 }
 
 .testimonials__slide {

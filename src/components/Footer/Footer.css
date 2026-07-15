@@ -10,6 +10,7 @@
   padding-top: clamp(4rem, 8vw, 6rem);
   border-top: 1px solid rgba(255, 255, 255, 0.05); /* Thin dark divider line */
   position: relative;
+  padding-bottom: 3.5rem;
 }
 
 /* Master Grid Structure */

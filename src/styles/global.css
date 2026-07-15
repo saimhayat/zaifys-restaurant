@@ -76,6 +76,10 @@
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  
+  /* ADD THESE TWO LINES 👇 */
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -88,7 +92,18 @@ body {
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  
+  /* ADD THESE TWO LINES 👇 */
+  max-width: 100%;
   overflow-x: hidden;
+}
+
+/* Ultimate Horizontal Scroll Fix */
+.app-root {
+  width: 100%;
+  max-width: 100%; /* 👈 CHANGED FROM 100vw */
+  overflow-x: hidden;
+  position: relative;
 }
 
 h1,

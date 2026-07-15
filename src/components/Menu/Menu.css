@@ -10,17 +10,20 @@
 
 .menu__tabs {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.65rem;
-  margin-bottom: clamp(2rem, 5vw, 3.5rem);
-  -ms-overflow-style: none;  /* Hide scrollbar for IE and Edge */
-  scrollbar-width: none;  /* Hide scrollbar for Firefox */
+  gap: 1rem; /* or whatever your original gap was */
+  overflow-x: auto; /* Allows horizontal scrolling within the box */
+  overflow-y: hidden;
+  white-space: nowrap; /* Prevents buttons from wrapping to the next line */
+  max-width: 100%;
+  padding-bottom: 0.5rem; /* Optional: gives room for the scrollbar */
+  
+  /* Hide the ugly default scrollbar on mobile */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
 }
 
-/* Hide webkit scrollbar but preserve swipe navigation */
 .menu__tabs::-webkit-scrollbar {
-  display: none;
+  display: none; /* Chrome/Safari */
 }
 
 .menu__tab {
