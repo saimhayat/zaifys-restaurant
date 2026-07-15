@@ -1,6 +1,5 @@
 /* ===================================================
    ZAIFY'S RESTAURANT — NAVBAR STYLESHEET
-   ADAPTED TO THE DOPE.COM.PK VISUAL IDENTITY
    =================================================== */
 
 /* ---- Base Navbar Frame ---- */
@@ -16,6 +15,7 @@
               border-color 0.4s cubic-bezier(0.25, 1, 0.5, 1);
   border-bottom: 1px solid transparent;
   padding-top: 10px;
+  overflow-x: hidden; /* Prevents any internal elements from causing horizontal scroll */
 }
 
 .navbar__inner {
@@ -23,16 +23,15 @@
   align-items: center;
   justify-content: space-between;
   padding: 1.5rem clamp(1.25rem, 4vw, 3rem);
-  gap: 1.5rem; /* Prevents segment blocks from colliding */
+  gap: 1.5rem;
   transition: padding 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* Scrolled Flat-Dark State with Dope Yellow Accent Border */
 .navbar--scrolled {
-  background: #000000; /* Solid pitch-black food portal background */
+  background: #000000;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-color: rgba(255, 199, 0, 0.15); /* Thin brand yellow accent line */
+  border-color: rgba(255, 199, 0, 0.15);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
 }
 
@@ -41,15 +40,14 @@
   padding-bottom: 0.85rem;
 }
 
-/* Brand logo and location wrapper wrapper */
+/* Brand logo and location wrapper */
 .navbar__brand-wrapper {
   display: flex;
   align-items: center;
   gap: clamp(0.75rem, 2vw, 1.5rem);
-  flex-shrink: 0; /* Prevents container from collapsing and overlaps on resize */
+  flex-shrink: 0; /* FIX: Prevents container from shrinking and overlapping elements on desktop */
 }
 
-/* Brand Logo Layout (Dope Style Bold Sans) */
 .navbar__logo {
   display: flex;
   align-items: center;
@@ -58,7 +56,6 @@
   text-decoration: none;
 }
 
-/* Rounded brand initial badge */
 .navbar__logo-mark {
   width: 38px;
   height: 38px;
@@ -66,10 +63,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-display, sans-serif); /* Uses clean display sans-serif */
+  font-family: var(--font-display, sans-serif);
   font-size: 1.15rem;
   font-weight: 900;
-  color: #000000; /* High contrast black letter */
+  color: #000000;
   background: var(--gradient-gold, linear-gradient(135deg, #ffdb4d, #ffc700));
   flex-shrink: 0;
   box-shadow: 0 4px 12px rgba(255, 199, 0, 0.3);
@@ -95,15 +92,45 @@
   font-weight: 800;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: var(--color-secondary, #ffc700); /* Vibrant yellow highlight */
+  color: var(--color-secondary, #ffc700);
   margin-top: 0.2rem;
+}
+
+/* Location Picker */
+.navbar__location-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 0.9rem;
+  border-radius: 20px;
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: var(--font-body, sans-serif);
+  max-width: 100%; /* Prevents overflow */
+}
+
+.navbar__location-selector:hover {
+  border-color: #ffc700;
+  background: rgba(255, 199, 0, 0.05);
+}
+
+.navbar__location-text {
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Primary Desktop Links Navigation */
 .navbar__links {
   display: flex;
   align-items: center;
-  gap: clamp(0.75rem, 1.5vw, 1.5rem); /* Responsive spacing narrows down gap as space reduces */
+  gap: clamp(0.75rem, 1.5vw, 1.5rem);
   flex-shrink: 1;
 }
 
@@ -121,7 +148,6 @@
   text-transform: uppercase;
 }
 
-/* Center-out expanding underline */
 .navbar__link::after {
   content: "";
   position: absolute;
@@ -176,7 +202,6 @@
   background: rgba(255, 199, 0, 0.04);
 }
 
-/* ordering button styled like Dope PK order buttons */
 .navbar__cta {
   padding: 0.65rem 1.4rem;
   font-size: 0.82rem;
@@ -185,7 +210,7 @@
   text-transform: uppercase;
   border-radius: 8px;
   background: var(--gradient-gold, linear-gradient(135deg, #ffdb4d, #ffc700));
-  color: #000000 !important; /* Forces dark readable text over bright yellow */
+  color: #000000 !important;
   box-shadow: var(--shadow-gold, 0 4px 15px rgba(255, 199, 0, 0.25));
 }
 
@@ -196,14 +221,76 @@
   box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
 }
 
-/* Hamburger Toggle Layout */
+/* ---- Pure CSS Hamburger Toggle ---- */
 .navbar__toggle {
   display: none;
   background: transparent;
   border: none;
   cursor: pointer;
-  color: #ffffff;
-  padding: 0.4rem;
+  width: 30px;
+  height: 24px;
+  position: relative;
+  padding: 0;
+  flex-shrink: 0; /* Prevents it from ever being squashed */
+  z-index: 101;
+}
+
+.navbar__toggle-box,
+.navbar__toggle-inner,
+.navbar__toggle-inner::before,
+.navbar__toggle-inner::after {
+  width: 30px;
+  height: 3px;
+  background: #ffffff;
+  border-radius: 2px;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), 
+              top 0.35s cubic-bezier(0.25, 1, 0.5, 1), 
+              background 0.3s ease;
+}
+
+.navbar__toggle-box {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
+
+.navbar__toggle-inner {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
+
+.navbar__toggle-inner::before,
+.navbar__toggle-inner::after {
+  content: "";
+  position: absolute;
+  left: 0;
+}
+
+.navbar__toggle-inner::before { top: -9px; }
+.navbar__toggle-inner::after { top: 9px; }
+
+/* Active (X) State */
+.navbar__toggle.is-active .navbar__toggle-box {
+  background: transparent; /* Hide the middle static bar */
+}
+
+.navbar__toggle.is-active .navbar__toggle-inner {
+  background: #ffc700; /* Turn X yellow when active */
+}
+
+.navbar__toggle.is-active .navbar__toggle-inner::before {
+  top: 0;
+  transform: rotate(45deg);
+  background: #ffc700;
+}
+
+.navbar__toggle.is-active .navbar__toggle-inner::after {
+  top: 0;
+  transform: rotate(-45deg);
+  background: #ffc700;
 }
 
 /* Mobile Screen Dimming Overlay */
@@ -229,6 +316,12 @@
 
 /* Responsive threshold raised from 960px to 1180px for cleaner mid-sized viewport layout */
 @media (max-width: 1180px) {
+  /* Restores the original responsive shrinking behavior only on smaller screens */
+  .navbar__brand-wrapper {
+    flex-shrink: 1;
+    min-width: 0;
+  }
+
   .navbar__links {
     display: none;
   }
@@ -238,9 +331,22 @@
   }
 
   .navbar__toggle {
-    display: flex;
-    z-index: 101;
+    display: block;
   }
+
+  /* 👇 ADD THESE TWO RULES HERE 👇 */
+  .navbar__location-text {
+    display: none;
+  }
+
+  .navbar__location-selector {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 8px;
+  }
+  /* 👆 END OF ADDITIONS 👆 */
 
   /* Drawer Container Panel */
   .navbar__mobile {
@@ -258,6 +364,7 @@
     transform: translateX(100%);
     transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1);
     z-index: 99;
+    will-change: transform;
   }
 
   .navbar__mobile--open {
@@ -289,7 +396,6 @@
     color: var(--color-secondary, #ffc700);
   }
 
-  /* Mobile ordering button alignment */
   .navbar__mobile .btn {
     width: 100%;
     padding: 0.9rem;
@@ -324,7 +430,6 @@
   }
 }
 
-/* Micro Adjustment for Small Screen Sizes */
 @media (max-width: 480px) {
   .navbar__logo-text {
     font-size: 1.15rem;
@@ -376,7 +481,6 @@
   animation: location-slide-up 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* ---- Modal Header ---- */
 .location-modal__header {
   background: linear-gradient(135deg, #ffc700, #ffdb4d);
   padding: 1.1rem 1.35rem;
@@ -434,7 +538,6 @@
   transform: rotate(90deg);
 }
 
-/* ---- Modal Body ---- */
 .location-modal__body {
   padding: 1.5rem 1.35rem 1.65rem;
   display: flex;
@@ -512,7 +615,6 @@
   pointer-events: none;
 }
 
-/* ---- Confirm Button ---- */
 .location-modal__confirm {
   margin-top: 0.5rem;
   width: 100%;
@@ -542,7 +644,6 @@
   box-shadow: none;
 }
 
-/* ---- Modal Mobile tweaks ---- */
 @media (max-width: 480px) {
   .location-modal {
     max-width: 100%;
@@ -558,13 +659,10 @@
   }
 }
 
-
-
 /* ===================================================
    NAVBAR CART BUTTON
    =================================================== */
 
-/* Desktop Cart */
 .navbar__cart {
   position: relative;
   display: flex;
@@ -602,7 +700,6 @@
   border: 2px solid #000000;
 }
 
-/* Mobile Cart Link inside Off-canvas Drawer */
 .navbar__mobile-cart {
   display: flex;
   align-items: center;
@@ -639,7 +736,6 @@
   border-radius: 12px;
 }
 
-/* Hide cart on very small mobile screens if it causes overflow (Optional) */
 @media (max-width: 380px) {
   .navbar__cart {
     width: 36px;
