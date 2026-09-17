@@ -9,26 +9,57 @@ const SLIDE_INTERVAL = 5500;
 function Testimonials() {
   const headRef = useReveal();
   const [activeIndex, setActiveIndex] = useState(0);
-  const timerRef = useRef(null);
+  // Pausing is state (not just clearInterval) so autoplay resumes when the
+  // pointer or focus leaves — clearing the interval alone froze it forever.
+  const [paused, setPaused] = useState(false);
+  const touchStart = useRef(null);
 
   const goTo = (index) => {
-    setActiveIndex((index + testimonials.length) % testimonials.length);
+    setActiveIndex(((index % testimonials.length) + testimonials.length) % testimonials.length);
+  };
+
+  /* Swipe on touch devices. The arrows are hidden on mobile, so without this
+     the only way to browse reviews there is tapping the dots. */
+  const handleTouchStart = (e) => {
+    const touch = e.touches[0];
+    if (!touch) return;
+    touchStart.current = { x: touch.clientX, y: touch.clientY };
+    setPaused(true); // don't advance mid-swipe
+  };
+
+  const handleTouchEnd = (e) => {
+    const start = touchStart.current;
+    touchStart.current = null;
+    setPaused(false);
+    if (!start) return;
+
+    const touch = e.changedTouches[0];
+    if (!touch) return;
+    const dx = touch.clientX - start.x;
+    const dy = touch.clientY - start.y;
+
+    // Ignore taps and mostly-vertical drags so page scrolling keeps working.
+    if (Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy)) return;
+    goTo(activeIndex + (dx < 0 ? 1 : -1));
+  };
+
+  const cancelTouch = () => {
+    touchStart.current = null;
+    setPaused(false);
   };
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia?.(
       "(prefers-reduced-motion: reduce)"
     ).matches;
-    if (prefersReducedMotion) return;
+    if (prefersReducedMotion || paused) return;
 
-    timerRef.current = setInterval(() => {
+    const id = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % testimonials.length);
     }, SLIDE_INTERVAL);
 
-    return () => clearInterval(timerRef.current);
-  }, []);
-
-  const pause = () => clearInterval(timerRef.current);
+    return () => clearInterval(id);
+  }, [paused]);
 
   return (
     <section id="reviews" className="testimonials section-padding">
@@ -42,8 +73,13 @@ function Testimonials() {
         {/* Carousel Block */}
         <div
           className="testimonials__carousel"
-          onMouseEnter={pause}
-          onFocus={pause}
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          onFocus={() => setPaused(true)}
+          onBlur={() => setPaused(false)}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          onTouchCancel={cancelTouch}
         >
           {/* Positioned backdrop quote mark */}
           <QuoteIcon width="56" height="42" className="testimonials__quote-mark" />

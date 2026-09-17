@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Star, Clock, Flame, ShoppingCart } from "lucide-react";
 import { useCart } from "../../context/CartContext"; // Import the useCart hook
 import "./OrderModal.css";
 
@@ -26,14 +27,15 @@ function OrderModal({ item, onClose }) {
     };
   }, [onClose]);
 
-  const getPrice = () => {
-    const numericPrice = Number(String(item.price).replace(/[^\d]/g, ""));
+  // Base price never depends on the selected size — only the effective price does.
+  const basePrice = Number(String(item.price).replace(/[^\d]/g, ""));
 
+  const getPrice = () => {
     if (size === "Half") {
-      return Math.round(numericPrice * 0.6);
+      return Math.round(basePrice * 0.6);
     }
 
-    return numericPrice;
+    return basePrice;
   };
 
   const total = getPrice() * quantity;
@@ -76,15 +78,19 @@ function OrderModal({ item, onClose }) {
           <h2>{item.name}</h2>
 
           <div className="order-modal__rating">
-            ⭐⭐⭐⭐⭐
+            <span className="order-modal__stars" aria-label="Rated 4.8 out of 5">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} size={15} fill="currentColor" strokeWidth={0} />
+              ))}
+            </span>
             <span>4.8 (184 Reviews)</span>
           </div>
 
           <p className="order-modal__description">{item.description}</p>
 
           <div className="order-modal__meta">
-            <span>⏱ 20-30 mins</span>
-            <span>🔥 Bestseller</span>
+            <span><Clock size={14} strokeWidth={2} /> 20-30 mins</span>
+            <span><Flame size={14} strokeWidth={2} /> Bestseller</span>
           </div>
 
           {/* Serving */}
@@ -96,7 +102,7 @@ function OrderModal({ item, onClose }) {
                 onClick={() => setSize("Half")}
               >
                 <span>Half</span>
-                <small>Rs. {Math.round(getPrice() * 0.6)}</small>
+                <small>Rs. {Math.round(basePrice * 0.6).toLocaleString()}</small>
               </button>
 
               <button
@@ -104,7 +110,7 @@ function OrderModal({ item, onClose }) {
                 onClick={() => setSize("Full")}
               >
                 <span>Full</span>
-                <small>Rs. {getPrice()}</small>
+                <small>Rs. {basePrice.toLocaleString()}</small>
               </button>
             </div>
           </div>
@@ -152,7 +158,7 @@ function OrderModal({ item, onClose }) {
               <strong>Rs. {total.toLocaleString()}</strong>
             </div>
             <button className="add-cart-btn" onClick={handleAddToCartClick}>
-              🛒 Add To Cart
+              <ShoppingCart size={17} strokeWidth={2} /> Add To Cart
             </button>
           </div>
         </div>

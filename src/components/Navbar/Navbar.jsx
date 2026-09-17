@@ -1,39 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { ChevronDown, X, ShoppingCart } from "lucide-react";
 import { scrollToSection } from "../../utils/scrollTo";
-import { PhoneIcon } from "../Icons"; // Removed MenuIcon and CloseIcon
+import { PhoneIcon } from "../Icons";
+import ThemeToggle from "../ThemeToggle/ThemeToggle";
 import { restaurantInfo } from "../../data/siteData";
 import { useCart } from "../../context/CartContext";
 import "./Navbar.css";
-
-// Standalone SVG Icons
-const MapPinIcon = (props) => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-    <circle cx="12" cy="10" r="3" />
-  </svg>
-);
-
-const ChevronIcon = (props) => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <polyline points="6 9 12 15 18 9" />
-  </svg>
-);
-
-const ModalCloseIcon = (props) => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <line x1="18" y1="6" x2="6" y2="18" />
-    <line x1="6" y1="6" x2="18" y2="18" />
-  </svg>
-);
-
-const CartIcon = (props) => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <circle cx="9" cy="21" r="1" />
-    <circle cx="20" cy="21" r="1" />
-    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-  </svg>
-);
 
 const NAV_LINKS = [
   { label: "Home", id: "home" },
@@ -124,15 +97,16 @@ function Navbar() {
             </span>
           </a>
 
-          <button
+          {/* Select Location — commented out for now, re-enable later */}
+          {/* <button
             onClick={handleLocationClick}
             className="navbar__location-selector"
           >
-            <MapPinIcon style={{ color: "#ffc700" }} />
+            <MapPin className="navbar__location-icon" size={14} strokeWidth={2.25} />
             <span className="navbar__location-text">
               {currentLocation}
             </span>
-          </button>
+          </button> */}
         </div>
 
         <nav className="navbar__links" aria-label="Primary">
@@ -148,9 +122,11 @@ function Navbar() {
             <PhoneIcon width="13" height="13" />
             <span>{restaurantInfo.phone}</span>
           </a>
-          
+
+          <ThemeToggle />
+
           <Link to="/cart" className="navbar__cart" aria-label="View Cart">
-            <CartIcon />
+            <ShoppingCart size={18} strokeWidth={1.9} />
             {totalItems > 0 && <span className="navbar__cart-badge">{totalItems}</span>}
           </Link>
 
@@ -159,17 +135,19 @@ function Navbar() {
           </button>
         </div>
 
-        {/* Pure CSS Hamburger Toggle */}
-        <button
-          className={`navbar__toggle ${isOpen ? "is-active" : ""}`}
-          aria-label={isOpen ? "Close menu" : "Open menu"}
-          aria-expanded={isOpen}
-          onClick={() => setIsOpen((prev) => !prev)}
-        >
-          <span className="navbar__toggle-box">
-            <span className="navbar__toggle-inner"></span>
-          </span>
-        </button>
+        <div className="navbar__actions-mobile">
+          <ThemeToggle className="theme-toggle--mobile" />
+          <button
+            className={`navbar__toggle ${isOpen ? "is-active" : ""}`}
+            aria-label={isOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isOpen}
+            onClick={() => setIsOpen((prev) => !prev)}
+          >
+            <span className="navbar__toggle-box">
+              <span className="navbar__toggle-inner"></span>
+            </span>
+          </button>
+        </div>
       </div>
 
       {isOpen && <div className="navbar__overlay" onClick={() => setIsOpen(false)} aria-hidden="true" />}
@@ -184,7 +162,7 @@ function Navbar() {
         </nav>
         
         <Link to="/cart" className="navbar__mobile-cart" onClick={() => setIsOpen(false)}>
-          <CartIcon width="18" height="18" />
+          <ShoppingCart size={18} strokeWidth={1.9} />
           <span>View Cart</span>
           {totalItems > 0 && <span className="navbar__mobile-cart-badge">{totalItems}</span>}
         </Link>
@@ -211,7 +189,7 @@ function Navbar() {
                 onClick={() => setIsLocationModalOpen(false)}
                 aria-label="Close"
               >
-                <ModalCloseIcon />
+                <X size={18} strokeWidth={2.25} />
               </button>
             </div>
 
@@ -226,8 +204,7 @@ function Navbar() {
                     {Object.keys(LOCATION_DATA).map((city) => (
                       <option key={city} value={city}>{city}</option>
                     ))}
-                  </select>
-                  <ChevronIcon className="location-modal__chevron" />
+                  </select>                    <ChevronDown className="location-modal__chevron" size={16} strokeWidth={2.25} />
                 </div>
               </div>
 
@@ -244,8 +221,7 @@ function Navbar() {
                     {selectedCity && LOCATION_DATA[selectedCity].map((area) => (
                       <option key={area} value={area}>{area}</option>
                     ))}
-                  </select>
-                  <ChevronIcon className="location-modal__chevron" />
+                  </select>                    <ChevronDown className="location-modal__chevron" size={16} strokeWidth={2.25} />
                 </div>
               </div>
 

@@ -1,28 +1,28 @@
 /* ===================================================
    ZAIFY'S RESTAURANT — FOOTER SECTION STYLESHEET
-   REFACTORED FOR THE DOPE.COM.PK VISUAL IDENTITY
+   Theme-aware · modern newsletter
    =================================================== */
 
-/* Base Footer Container */
+/* Base Footer */
 .footer {
-  background: #000000; /* Solid pitch-black footer canvas */
-  color: rgba(255, 255, 255, 0.6);
+  background: var(--color-bg);
+  color: var(--color-text-muted);
   padding-top: clamp(4rem, 8vw, 6rem);
-  border-top: 1px solid rgba(255, 255, 255, 0.05); /* Thin dark divider line */
+  border-top: 1px solid var(--color-border);
   position: relative;
   padding-bottom: 3.5rem;
 }
 
-/* Master Grid Structure */
+/* Master Grid */
 .footer__grid {
   display: grid;
   grid-template-columns: 1.2fr 0.8fr 1fr 1.2fr;
   gap: clamp(2rem, 4vw, 3.5rem);
   padding-bottom: 3.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--color-border);
 }
 
-/* Brand Section Column */
+/* Brand column */
 .footer__brand {
   display: flex;
   flex-direction: column;
@@ -32,76 +32,75 @@
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
-  font-family: var(--font-display, sans-serif); /* Uses clean sans-serif */
-  font-size: 1.35rem;
-  font-weight: 900; /* Blocky uppercase brand identity */
-  color: #ffffff;
+  font-family: var(--font-display, sans-serif);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-primary);
   margin-bottom: 1rem;
   text-decoration: none;
-  text-transform: uppercase;
   letter-spacing: -0.02em;
 }
 
 .footer__logo-mark {
   width: 38px;
   height: 38px;
-  border-radius: 50%;
-  background: var(--gradient-gold, linear-gradient(135deg, #ffdb4d, #ffc700));
-  color: #000000; /* High contrast black letter */
+  border-radius: 12px;
+  background: var(--gradient-gold);
+  color: #1a1405;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.15rem;
-  font-weight: 900;
+  font-weight: 700;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(255, 199, 0, 0.25);
+  box-shadow: var(--shadow-gold);
 }
 
 .footer__tagline {
-  font-family: var(--font-body, sans-serif); /* Changed from classic italic serif to modern uppercase */
+  font-family: var(--font-body, sans-serif);
   font-style: normal;
   font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.2em; /* High tracking street layout style */
-  color: var(--color-secondary, #ffc700);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--color-accent-text);
   margin-bottom: 1.5rem;
   max-width: 280px;
-  line-height: 1.4;
+  line-height: 1.5;
   text-transform: uppercase;
 }
 
-/* Brand Social Media Icons */
+/* Socials */
 .footer__socials {
   display: flex;
   gap: 0.75rem;
 }
 
 .footer__socials a {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.8);
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-pill, 999px);
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-text);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: all 0.3s var(--ease-luxury, ease);
 }
 
 .footer__socials a:hover {
-  background: var(--color-secondary, #ffc700); /* Inverts to vibrant solid yellow on hover */
-  color: #000000;
+  background: var(--gradient-gold);
+  color: #1a1405;
   border-color: transparent;
   transform: translateY(-3px);
-  box-shadow: 0 4px 12px rgba(255, 199, 0, 0.35);
+  box-shadow: var(--shadow-gold);
 }
 
-/* Shared Columns Configuration */
+/* Column titles */
 .footer__col-title {
-  color: #ffffff;
-  font-family: var(--font-display, sans-serif); /* Swapped display serifs with bold sans */
-  font-size: 0.95rem;
-  font-weight: 800;
+  color: var(--color-primary);
+  font-family: var(--font-display, sans-serif);
+  font-size: 0.92rem;
+  font-weight: 600;
   margin-bottom: 1.5rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -117,7 +116,7 @@
   gap: 0.85rem;
 }
 
-/* Nav Links Actions and Buttons */
+/* Link buttons */
 .footer__link-btn {
   background: none;
   border: none;
@@ -125,64 +124,64 @@
   text-align: left;
   cursor: pointer;
   font-size: 0.9rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+  color: var(--color-text-muted);
   display: inline-flex;
   align-items: center;
+  min-height: 32px;
   transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .footer__link-btn:hover {
-  color: var(--color-secondary, #ffc700); /* Highlights link item to yellow */
+  color: var(--color-accent-text);
   transform: translateX(4px);
 }
 
-/* Contact Column Specifics */
+/* Contact column */
 .footer__contact-list li {
   font-size: 0.9rem;
   line-height: 1.6;
 }
 
 .footer__contact-list a {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--color-text-muted);
   text-decoration: none;
-  font-weight: 700;
+  font-weight: 600;
   transition: color 0.3s ease;
 }
 
 .footer__contact-list a:hover {
-  color: var(--color-secondary, #ffc700);
+  color: var(--color-accent-text);
 }
 
 .footer__services {
-  opacity: 0.9;
-  font-size: 0.82rem !important;
-  font-weight: 700;
+  font-size: 0.78rem !important;
+  font-weight: 600;
   text-transform: uppercase;
-  color: var(--color-secondary, #ffc700);
+  letter-spacing: 0.04em;
+  color: var(--color-accent-text);
 }
 
-/* Integrated Newsletter UI */
+/* Newsletter */
 .footer__newsletter-desc {
   font-size: 0.88rem;
-  line-height: 1.5;
+  line-height: 1.55;
   margin-bottom: 1.25rem;
 }
 
-/* Refitted Capsule style to tight clean geometric box */
 .footer__form-wrapper {
   display: flex;
   position: relative;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-md, 10px);
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill, 999px);
   padding: 4px;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .footer__form-wrapper:focus-within {
-  border-color: var(--color-secondary, #ffc700);
-  box-shadow: 0 0 12px rgba(255, 199, 0, 0.1);
+  border-color: var(--color-secondary);
+  box-shadow: 0 0 0 3px rgba(245, 179, 1, 0.12);
 }
 
 .footer__form-wrapper input {
@@ -190,63 +189,69 @@
   border: none;
   background: transparent;
   padding: 0.65rem 0.9rem;
-  color: #ffffff;
+  color: var(--color-text);
   font-size: 0.88rem;
   outline: none;
   min-width: 0;
 }
 
+@media (max-width: 768px) {
+  .footer__form-wrapper input {
+    font-size: 16px; /* prevents iOS zoom */
+  }
+}
+
 .footer__form-wrapper input::placeholder {
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--color-text-faint);
 }
 
 .footer__submit-btn {
   border: none;
   cursor: pointer;
-  background: var(--gradient-gold, linear-gradient(135deg, #ffdb4d, #ffc700));
-  color: #000000; /* Solid high-contrast black text on input button */
+  background: var(--gradient-gold);
+  color: #1a1405;
   font-size: 0.82rem;
-  font-weight: 800;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.02em;
   padding: 0.65rem 1.25rem;
-  border-radius: var(--radius-sm, 6px); /* Clean geometrical buttons */
-  transition: opacity 0.3s ease, transform 0.2s ease;
+  border-radius: var(--radius-pill, 999px);
+  transition: filter 0.3s ease, transform 0.2s ease;
+  min-height: 44px;
 }
 
 .footer__submit-btn:hover {
-  opacity: 0.95;
+  filter: brightness(1.07);
   transform: scale(1.02);
 }
 
-/* Subscription Success Panel */
+/* Subscribed box */
 .footer__subscribed-box {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  background: rgba(255, 199, 0, 0.04);
-  border: 1px dashed var(--color-secondary, #ffc700);
+  background: rgba(245, 179, 1, 0.06);
+  border: 1px dashed var(--color-secondary);
   padding: 0.75rem 1rem;
-  border-radius: var(--radius-md, 8px);
+  border-radius: var(--radius-md, 12px);
 }
 
 .footer__subscribed-icon {
-  color: var(--color-secondary, #ffc700);
+  color: var(--color-accent-text);
   font-weight: bold;
 }
 
 .footer__subscribed {
-  font-size: 0.88rem;
-  color: var(--color-secondary, #ffc700);
+  font-size: 0.85rem;
+  color: var(--color-accent-text);
   margin: 0;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
 }
 
-/* Bottom Copyright Metadata Bar */
+/* Bottom bar */
 .footer__bottom {
-  background: #080808; /* Slightly darker pitch black zone */
+  background: var(--color-bg-soft);
+  margin-top: 0;
 }
 
 .footer__bottom-inner {
@@ -257,21 +262,21 @@
   gap: 1rem;
   padding: 1.75rem 0;
   font-size: 0.8rem;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .footer__copyright {
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--color-text-faint);
   margin: 0;
 }
 
 .footer__credit {
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--color-text-faint);
   margin: 0;
   font-style: italic;
 }
 
-/* Responsive Grid Adjustments */
+/* Responsive */
 @media (max-width: 992px) {
   .footer__grid {
     grid-template-columns: repeat(2, 1fr);

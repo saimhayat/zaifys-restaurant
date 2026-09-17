@@ -9,8 +9,10 @@ import Gallery from "../components/Gallery/Gallery";
 import Testimonials from "../components/Testimonials/Testimonials";
 import Stats from "../components/Stats/Stats";
 import Reservation from "../components/Reservation/Reservation";
+import FAQ from "../components/FAQ/FAQ";
 import Contact from "../components/Contact/Contact";
 import Footer from "../components/Footer/Footer";
+import FloatingActions from "../components/FloatingActions/FloatingActions";
 
 function Home() {
   return (
@@ -30,9 +32,11 @@ function Home() {
         <Testimonials />
         <Stats />
         <Reservation />
+        <FAQ />
         <Contact />
       </main>
       <Footer />
+      <FloatingActions />
     </>
   );
 }

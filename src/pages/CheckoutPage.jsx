@@ -1,14 +1,8 @@
 import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
+import { ArrowLeft, Banknote, CreditCard, Check } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import "./CheckoutPage.css";
-
-const ArrowLeftIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="19" y1="12" x2="5" y2="12" />
-    <polyline points="12 19 5 12 12 5" />
-  </svg>
-);
 
 function CheckoutPage() {
   const { cartItems, cartTotal, deliveryFee, grandTotal, clearCart } = useCart();
@@ -49,7 +43,9 @@ function CheckoutPage() {
     return (
       <div className="checkout-page__success">
         <div className="success-card">
-          <div className="success-card__icon">✓</div>
+          <div className="success-card__icon">
+            <Check size={40} strokeWidth={3} />
+          </div>
           <h1>Order Placed Successfully!</h1>
           <p>Thank you for your order. We are preparing your delicious food right now!</p>
           <p className="success-card__subtext">A confirmation call will be made to <strong>{formInfo.phone}</strong> shortly.</p>
@@ -68,7 +64,7 @@ function CheckoutPage() {
         <div className="checkout-page__header">
           <h1 className="checkout-page__title">Checkout</h1>
           <button className="cart-back-btn" onClick={backToCart}>
-            <ArrowLeftIcon /> Back to Cart
+            <ArrowLeft size={17} strokeWidth={2.2} /> Back to Cart
           </button>
         </div>
 
@@ -108,11 +104,13 @@ function CheckoutPage() {
               <div className="payment-options">
                 <label className={`payment-card ${formInfo.paymentMethod === "Cash on Delivery" ? "active" : ""}`}>
                   <input type="radio" name="paymentMethod" value="Cash on Delivery" checked={formInfo.paymentMethod === "Cash on Delivery"} onChange={handleInputChange} />
-                  <span>💵 Cash on Delivery</span>
+                  <Banknote size={17} strokeWidth={2} />
+                  <span>Cash on Delivery</span>
                 </label>
                 <label className={`payment-card ${formInfo.paymentMethod === "Card" ? "active" : ""}`}>
                   <input type="radio" name="paymentMethod" value="Card" checked={formInfo.paymentMethod === "Card"} onChange={handleInputChange} />
-                  <span>💳 Credit / Debit Card</span>
+                  <CreditCard size={17} strokeWidth={2} />
+                  <span>Credit / Debit Card</span>
                 </label>
               </div>
             </div>

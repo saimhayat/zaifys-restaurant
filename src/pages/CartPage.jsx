@@ -1,21 +1,7 @@
 import { useNavigate } from "react-router-dom";
+import { Trash2, ArrowLeft } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import "./CartPage.css";
-
-// Icons
-const TrashIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="3 6 5 6 21 6" />
-    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-  </svg>
-);
-
-const ArrowLeftIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="19" y1="12" x2="5" y2="12" />
-    <polyline points="12 19 5 12 12 5" />
-  </svg>
-);
 
 function CartPage() {
   const { cartItems, updateQuantity, removeFromCart, cartTotal, deliveryFee, grandTotal, clearCart } = useCart();
@@ -64,7 +50,7 @@ function CartPage() {
           {/* Left Side: Cart Items */}
           <div className="cart-items__list">
             <button onClick={goToMenu} className="cart-back-btn">
-              <ArrowLeftIcon /> Add more items
+              <ArrowLeft size={17} strokeWidth={2.2} /> Add more items
             </button>
 
             {cartItems.map((item, index) => (
@@ -86,7 +72,7 @@ function CartPage() {
     <button onClick={() => updateQuantity(index, item.quantity + 1)}>+</button>
   </div>
   <button className="cart-item__remove" onClick={() => removeFromCart(index)}>
-    <TrashIcon /> Remove
+    <Trash2 size={15} strokeWidth={2} /> Remove
   </button>
 </div>
                 </div>

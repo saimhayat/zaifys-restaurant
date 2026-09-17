@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Check } from "lucide-react";
 import { scrollToSection } from "../../utils/scrollTo";
 import { FacebookIcon, InstagramIcon, WhatsappIcon } from "../Icons";
 import { restaurantInfo } from "../../data/siteData";
@@ -10,6 +11,7 @@ const QUICK_LINKS = [
   { label: "Gallery", id: "gallery" },
   { label: "Reviews", id: "reviews" },
   { label: "Reservation", id: "reservation" },
+  { label: "FAQ", id: "faq" },
 ];
 
 function Footer() {
@@ -92,7 +94,7 @@ function Footer() {
           </p>
           {subscribed ? (
             <div className="footer__subscribed-box">
-              <span className="footer__subscribed-icon">&✓;</span>
+              <Check size={16} strokeWidth={2.5} className="footer__subscribed-icon" />
               <p className="footer__subscribed">You&rsquo;re subscribed — thank you!</p>
             </div>
           ) : (

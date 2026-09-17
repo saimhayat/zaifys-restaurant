@@ -6,26 +6,31 @@
   justify-content: center;
   text-align: center;
   padding: 2rem;
-  background: var(--color-primary);
-  color: var(--color-text-inverse);
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
 .not-found__eyebrow {
   font-family: var(--font-display);
-  font-size: 5rem;
-  color: var(--color-secondary-light);
+  font-size: clamp(3.5rem, 12vw, 5rem);
+  font-weight: 700;
   line-height: 1;
   margin-bottom: 1rem;
+  background: var(--gradient-gold-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
 .not-found h1 {
-  color: var(--color-text-inverse);
-  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  color: var(--color-primary);
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
   margin-bottom: 0.8rem;
 }
 
 .not-found p {
-  color: rgba(246, 244, 239, 0.7);
+  color: var(--color-text-muted);
   max-width: 420px;
   margin-bottom: 2rem;
 }

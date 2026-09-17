@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Search, X } from "lucide-react";
 import { useReveal } from "../../hooks/useReveal";
 import { menuCategories, menuItems } from "../../data/menuData";
 import OrderModal from "./OrderModal";
@@ -60,6 +61,7 @@ function MenuCard({ item, onOrder }) {
 
 function Menu() {
   const [activeCategory, setActiveCategory] = useState("All");
+  const [query, setQuery] = useState("");
 
   // Selected menu item for popup
   const [selectedItem, setSelectedItem] = useState(null);
@@ -67,12 +69,20 @@ function Menu() {
   const headRef = useReveal();
 
   const filteredItems = useMemo(() => {
-    if (activeCategory === "All") return menuItems;
-
-    return menuItems.filter(
-      (item) => item.category === activeCategory
-    );
-  }, [activeCategory]);
+    let items = menuItems;
+    if (activeCategory !== "All") {
+      items = items.filter((item) => item.category === activeCategory);
+    }
+    const q = query.trim().toLowerCase();
+    if (q) {
+      items = items.filter(
+        (item) =>
+          item.name.toLowerCase().includes(q) ||
+          item.description.toLowerCase().includes(q)
+      );
+    }
+    return items;
+  }, [activeCategory, query]);
 
   return (
     <>
@@ -96,9 +106,30 @@ function Menu() {
               hand-cut steaks — a menu built to satisfy every craving
               at the table.
             </p>
+          </div>          {/* Search + Category Tabs */}
+          <div className="menu__toolbar">
+            <div className="menu__search">
+              <Search size={16} strokeWidth={2} className="menu__search-icon" />
+              <input
+                type="search"
+                className="menu__search-input"
+                placeholder="Search dishes…"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                aria-label="Search the menu"
+              />
+              {query && (
+                <button
+                  className="menu__search-clear"
+                  onClick={() => setQuery("")}
+                  aria-label="Clear search"
+                >
+                  <X size={14} strokeWidth={2.25} />
+                </button>
+              )}
+            </div>
           </div>
 
-          {/* Category Tabs */}
           <div
             className="menu__tabs"
             role="tablist"
@@ -118,19 +149,41 @@ function Menu() {
               >
                 {category}
               </button>
-            ))}
+            ))
+            }
           </div>
 
           {/* Menu Grid */}
-          <div className="menu__grid">
-            {filteredItems.map((item) => (
-              <MenuCard
-                key={item.id}
-                item={item}
-                onOrder={setSelectedItem}
-              />
-            ))}
-          </div>
+          {filteredItems.length > 0 ? (
+            <div className="menu__grid">
+              {filteredItems.map((item) => (
+                <MenuCard
+                  key={item.id}
+                  item={item}
+                  onOrder={setSelectedItem}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="menu__empty">
+              <Search size={40} strokeWidth={1.5} />
+              <h3>No dishes found</h3>
+              <p>
+                Nothing matches &ldquo;{query}&rdquo;
+                {activeCategory !== "All" && <> in {activeCategory}</>}. Try a
+                different search or category.
+              </p>
+              <button
+                className="btn btn-outline"
+                onClick={() => {
+                  setQuery("");
+                  setActiveCategory("All");
+                }}
+              >
+                Show Full Menu
+              </button>
+            </div>
+          )}
         </div>
       </section>
 

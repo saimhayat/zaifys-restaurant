@@ -1,0 +1,162 @@
+/* ===================================================
+   FLOATING ACTIONS — WhatsApp/call stack, scroll-to-top,
+   and the mobile sticky order bar
+   =================================================== */
+
+.fab-stack {
+  position: fixed;
+  right: clamp(1rem, 2.5vw, 1.75rem);
+  bottom: clamp(1rem, 2.5vw, 1.75rem);
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.fab {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-pill, 999px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 10px 26px -8px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s var(--ease-luxury, ease), box-shadow 0.3s ease, opacity 0.3s ease;
+}
+
+.fab:hover {
+  transform: translateY(-3px) scale(1.04);
+}
+
+.fab--small {
+  width: 42px;
+  height: 42px;
+  background: var(--color-card-solid);
+  color: var(--color-primary);
+  border: 1px solid var(--color-border-strong);
+  animation: fab-in 0.3s var(--ease-luxury, ease);
+}
+
+@keyframes fab-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fab--call {
+  background: var(--gradient-gold);
+  color: #1a1405;
+}
+
+.fab--call:hover {
+  box-shadow: 0 14px 30px -8px rgba(245, 179, 1, 0.5);
+}
+
+.fab--wa {
+  background: #25d366;
+  color: #ffffff;
+}
+
+.fab--wa:hover {
+  box-shadow: 0 14px 30px -8px rgba(37, 211, 102, 0.55);
+}
+
+.fab__pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-pill, 999px);
+  border: 2px solid #25d366;
+  animation: fab-pulse 2.2s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes fab-pulse {
+  0% { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(1.45); opacity: 0; }
+}
+
+/* ---------- Mobile sticky action bar ---------- */
+.action-bar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .action-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 90;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.3fr;
+    gap: 1px;
+    background: var(--color-border);
+    border-top: 1px solid var(--color-border);
+    padding-bottom: env(safe-area-inset-bottom);
+    /* Keep above page content, below modals */
+  }
+
+  .action-bar__btn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    min-height: 56px;
+    background: var(--color-bg-soft);
+    color: var(--color-text);
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    font-family: var(--font-body, sans-serif);
+  }
+
+  .action-bar__btn--wa {
+    color: #25d366;
+  }
+
+  .action-bar__btn--primary {
+    background: var(--gradient-gold);
+    color: #1a1405;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  /* Keep page content clear of the bar */
+  .footer {
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+  }
+
+  /* Hide the redundant desktop stack's call button on mobile (bar covers it);
+     keep WhatsApp + back-to-top floating above the bar */
+  .fab-stack {
+    bottom: calc(4.75rem + env(safe-area-inset-bottom));
+  }
+
+  .fab--call {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) and (min-width: 0px) {
+  body {
+    /* reserve nothing extra — bar overlays footer only */
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .fab__pulse {
+    animation: none;
+    opacity: 0;
+  }
+  .fab--small {
+    animation: none;
+  }
+}

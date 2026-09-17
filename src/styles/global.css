@@ -1,72 +1,154 @@
 /* ===================================================
-   ZAIFY'S RESTAURANT — GLOBAL DESIGN SYSTEM & TOKENS
-   REFACTORED FOR DOPE.COM.PK VISUAL IDENTITY
+   ZAIFY'S RESTAURANT — GLOBAL DESIGN SYSTEM
+   Modern dark + light theme · gold-amber accent
+   Space Grotesk display · Inter body
    =================================================== */
 
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* --- Surfaces --- */
+  --color-bg: #09090b;
+  --color-bg-soft: #101013;
+  --color-card: rgba(255, 255, 255, 0.04);
+  --color-card-hover: rgba(255, 255, 255, 0.07);
+  --color-card-solid: #141416;
+  --color-overlay: rgba(9, 9, 11, 0.75);
+
+  /* --- Text --- */
+  --color-primary: #fafafa;
+  --color-text: #e4e4e7;
+  --color-text-muted: #a1a1aa;
+  --color-text-faint: #71717a;
+  --color-text-inverse: #1a1405;
+
+  /* --- Borders --- */
+  --color-border: rgba(255, 255, 255, 0.09);
+  --color-border-strong: rgba(255, 255, 255, 0.16);
+  --color-border-gold: rgba(245, 179, 1, 0.28);
+
+  /* --- Gold-amber accent --- */
+  --color-secondary: #f5b301;
+  --color-secondary-light: #ffd76a;
+  --color-secondary-dark: #c98a06;
+  --color-accent-text: #ffd76a;
+  --color-accent-text-strong: #ffdd8a;
+  --gradient-gold: linear-gradient(135deg, #ffd76a 0%, #f5b301 55%, #e09e00 100%);
+  /* Gradient text clipped onto PAGE backgrounds (headings, numerals).
+     Bright on dark surfaces; darkened in light theme so it stays legible
+     on cream. Fills (buttons, chips) keep using --gradient-gold above. */
+  --gradient-gold-text: linear-gradient(135deg, #ffd76a 0%, #f5b301 55%, #e09e00 100%);
+
+  /* --- Feedback --- */
+  --color-danger: #f87171;
+  --color-success: #4ade80;
+
+  /* --- Ambient glows --- */
+  --glow-gold: radial-gradient(circle, rgba(245, 179, 1, 0.16), transparent 65%);
+  --glow-soft: radial-gradient(circle, rgba(245, 179, 1, 0.09), transparent 60%);
+  --aurora: radial-gradient(60% 45% at 50% 0%, rgba(245, 179, 1, 0.14), transparent 70%);
+
+  /* --- Shadows --- */
+  --shadow-soft: 0 24px 48px -20px rgba(0, 0, 0, 0.55);
+  --shadow-card: 0 14px 34px -16px rgba(0, 0, 0, 0.5);
+  --shadow-gold: 0 10px 30px -12px rgba(245, 179, 1, 0.45);
+
+  /* --- Header glass --- */
+  --glass-header: rgba(9, 9, 11, 0.72);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  /* --- Surfaces --- */
+  --color-bg: #faf9f6;
+  --color-bg-soft: #f3f1ea;
+  --color-card: #ffffff;
+  --color-card-hover: #fffdf6; /* warm tint, so hovers actually read on white */
+  --color-card-solid: #ffffff;
+  --color-overlay: rgba(24, 24, 27, 0.45);
+
+  /* --- Text --- */
+  --color-primary: #17171a;
+  --color-text: #2b2b30;
+  --color-text-muted: #5f5f66;
+  --color-text-faint: #8e8e95;
+  --color-text-inverse: #1a1405;
+
+  /* --- Borders: crisp hairlines are what give white cards an edge on cream --- */
+  --color-border: rgba(24, 24, 27, 0.11);
+  --color-border-strong: rgba(24, 24, 27, 0.2);
+  --color-border-gold: rgba(180, 120, 10, 0.4);
+
+  /* --- Gold-amber accent (darkened for contrast on light surfaces) --- */
+  --color-secondary: #b4780a; /* icons & rules — clears 3:1 on cream */
+  --color-secondary-light: #f5b301; /* stays bright for over-photo use */
+  --color-secondary-dark: #8f5f02;
+  --color-accent-text: #8a5a02; /* ~5:1 on cream and on the warm grey */
+  --color-accent-text-strong: #6f4601;
+  --gradient-gold: linear-gradient(135deg, #ffd76a 0%, #f5b301 55%, #c98a06 100%);
+  --gradient-gold-text: linear-gradient(135deg, #a86f04 0%, #8f5f02 55%, #7a4e02 100%);
+
+  /* --- Feedback --- */
+  --color-danger: #dc2626;
+  --color-success: #16a34a;
+
+  /* --- Ambient glows: kept faint so cream never looks stained --- */
+  --glow-gold: radial-gradient(circle, rgba(214, 152, 16, 0.13), transparent 65%);
+  --glow-soft: radial-gradient(circle, rgba(214, 152, 16, 0.08), transparent 60%);
+  --aurora: radial-gradient(60% 45% at 50% 0%, rgba(214, 152, 16, 0.1), transparent 70%);
+
+  /* --- Shadows: layered contact + diffuse, so light mode has real depth --- */
+  --shadow-soft: 0 1px 2px rgba(24, 24, 27, 0.05),
+    0 10px 22px -12px rgba(24, 24, 27, 0.13), 0 30px 60px -30px rgba(24, 24, 27, 0.18);
+  --shadow-card: 0 1px 2px rgba(24, 24, 27, 0.05), 0 8px 18px -10px rgba(24, 24, 27, 0.12);
+  --shadow-gold: 0 8px 22px -12px rgba(180, 120, 10, 0.45);
+
+  /* --- Header glass --- */
+  --glass-header: rgba(250, 249, 246, 0.82);
+}
+
+/* --- Typography tokens (theme-independent) --- */
 :root {
-  /* --- Sleek Dark-Mode Color Palette (Dope PK Style) --- */
-  --color-primary: #ffffff;            /* High-Contrast Off-White for Headings */
-  --color-secondary: #ffc700;          /* Dope Signature Vibrant Yellow */
-  --color-secondary-light: #ffe066;    /* Bright Accent Yellow */
-  --color-secondary-dark: #cc9f00;     /* Darker Brand Mustard/Yellow */
-  --color-bg: #000000;                 /* Deep Midnight Black Background */
-  --color-card: #121212;               /* Elevated Charcoal Card Background */
-  
-  /* Text Tones (Flipped for Dark Mode) */
-  --color-text: #f5f5f5;               /* Crisp Off-White Body Text */
-  --color-text-muted: #9e9e9e;         /* Soft Balance Cool Grey */
-  --color-text-inverse: #000000;       /* Pitch Black (used for text on yellow buttons) */
-  
-  /* Borders & Dividers */
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-border-gold: rgba(255, 199, 0, 0.25);
+  --font-display: "Space Grotesk", "Inter", "Segoe UI", sans-serif;
+  --font-body: "Inter", -apple-system, "Segoe UI", sans-serif;
 
-  /* --- Vibrant Fast-Food Gradients --- */
-  --gradient-gold: linear-gradient(135deg, #ffdb4d 0%, #ffc700 50%, #cc9f00 100%);
-  --gradient-dark: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.95) 100%);
-
-  /* --- Punchy, Modern Typography (Fluid Scales) --- */
-  --font-display: "Poppins", "Montserrat", "Segoe UI", sans-serif; /* Swapped out Serif for Bold Sans-Serif */
-  --font-body: "Poppins", "Segoe UI", -apple-system, sans-serif;
-  
-  --font-size-h1: clamp(2.5rem, 6.5vw, 4.5rem);
-  --font-size-h2: clamp(1.8rem, 4.5vw, 2.5rem);
-  --font-size-h3: clamp(1.15rem, 2.5vw, 1.35rem);
+  --font-size-h1: clamp(2.4rem, 6vw, 4.25rem);
+  --font-size-h2: clamp(1.7rem, 4vw, 2.6rem);
+  --font-size-h3: clamp(1.1rem, 2.2vw, 1.3rem);
   --font-size-body: 1rem;
 
-  /* --- Spacing Scale --- */
   --space-xs: 0.5rem;
   --space-sm: 1rem;
   --space-md: 1.75rem;
   --space-lg: 3rem;
   --space-xl: 5rem;
-  --space-2xl: 8rem;
+  --space-2xl: clamp(4.5rem, 10vw, 8rem);
 
-  /* --- Layout & Structural Radii --- */
   --max-width: 1240px;
-  --radius-sm: 6px;
-  --radius-md: 10px;                   /* Slightly tighter rounded corners for modern clean cards */
-  --radius-lg: 16px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 26px;
+  --radius-pill: 999px;
 
-  /* --- Ambient Dark-Theme Shadows --- */
-  --shadow-soft: 0 20px 40px -15px rgba(0, 0, 0, 0.8);
-  --shadow-card: 0 10px 30px -12px rgba(0, 0, 0, 0.6);
-  --shadow-gold: 0 12px 24px -10px rgba(255, 199, 0, 0.35);
-
-  /* --- Motion Systems --- */
-  --ease-luxury: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-luxury: cubic-bezier(0.22, 1, 0.36, 1);
   --duration-fast: 0.25s;
   --duration-med: 0.5s;
   --duration-slow: 0.8s;
 }
 
-/* --- Global Selection Color --- */
+/* --- Selection --- */
 ::selection {
-  background-color: rgba(255, 199, 0, 0.3);
-  color: #ffffff;
+  background-color: rgba(245, 179, 1, 0.35);
+  color: #fff;
+}
+:root[data-theme="light"] ::selection {
+  color: #18181b;
 }
 
-/* --- Standard HTML Core Reset --- */
+/* --- Reset --- */
 *,
 *::before,
 *::after {
@@ -76,8 +158,6 @@
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
-  
-  /* ADD THESE TWO LINES 👇 */
   max-width: 100%;
   overflow-x: hidden;
 }
@@ -92,16 +172,14 @@ body {
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  
-  /* ADD THESE TWO LINES 👇 */
   max-width: 100%;
   overflow-x: hidden;
+  transition: background-color var(--duration-med) ease, color var(--duration-med) ease;
 }
 
-/* Ultimate Horizontal Scroll Fix */
 .app-root {
   width: 100%;
-  max-width: 100%; /* 👈 CHANGED FROM 100vw */
+  max-width: 100%;
   overflow-x: hidden;
   position: relative;
 }
@@ -112,10 +190,10 @@ h3,
 h4 {
   font-family: var(--font-display);
   color: var(--color-primary);
-  line-height: 1.2;
+  line-height: 1.15;
   margin: 0;
-  font-weight: 700;                    /* Made heavier and bolder for active visual feel */
-  letter-spacing: -0.02em;             /* Tighter spacing for high impact */
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 p {
@@ -154,18 +232,24 @@ input,
 textarea,
 select {
   font-family: var(--font-body);
+  color-scheme: dark;
+}
+:root[data-theme="light"] input,
+:root[data-theme="light"] textarea,
+:root[data-theme="light"] select {
+  color-scheme: light;
 }
 
 section {
   position: relative;
 }
 
-/* --- Base Layout Utilities --- */
+/* --- Layout utilities --- */
 .container {
   width: 100%;
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 clamp(1.25rem, 4vw, 3rem);
+  padding: 0 clamp(1.15rem, 4vw, 3rem);
 }
 
 .section-padding {
@@ -178,16 +262,16 @@ section {
   }
 }
 
-/* ---- Shared Eyebrow Label Motif ---- */
+/* ---- Eyebrow label ---- */
 .eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.65rem;
   font-family: var(--font-body);
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--color-secondary);       /* Use bright signature yellow */
+  color: var(--color-accent-text);
   font-weight: 700;
   margin-bottom: var(--space-sm);
 }
@@ -195,24 +279,35 @@ section {
 .eyebrow::before {
   content: "";
   width: 24px;
-  height: 2px;                         /* Slightly thicker line for better visibility on dark bg */
-  background: var(--color-secondary);
+  height: 2px;
+  border-radius: 2px;
+  background: var(--gradient-gold);
 }
 
+/* ---- Section headings ---- */
 .section-heading {
   font-family: var(--font-display);
   font-size: var(--font-size-h2);
-  line-height: 1.2;
+  line-height: 1.15;
   color: var(--color-primary);
-  max-width: 650px;
+  max-width: 680px;
   margin: 0 0 var(--space-sm) 0;
+}
+
+.section-heading em {
+  font-style: normal;
+  background: var(--gradient-gold-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
 .section-sub {
   max-width: 580px;
   color: var(--color-text-muted);
   font-size: 1.02rem;
-  line-height: 1.6;
+  line-height: 1.65;
   margin: 0;
 }
 
@@ -233,10 +328,10 @@ section {
 }
 
 .section-head.center .eyebrow::before {
-  display: none; /* Hide prefix line on center-aligned configurations */
+  display: none;
 }
 
-/* ---- Dynamic Gold Thread Divider ---- */
+/* ---- Gold thread divider ---- */
 .gold-thread {
   display: flex;
   align-items: center;
@@ -249,6 +344,7 @@ section {
   display: block;
   width: 48px;
   height: 1.5px;
+  border-radius: 2px;
   background: linear-gradient(90deg, transparent, var(--color-secondary));
 }
 
@@ -262,18 +358,17 @@ section {
   flex-shrink: 0;
 }
 
-/* ---- Universal Button Tokens ---- */
+/* ---- Buttons ---- */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.55rem;
   padding: 0.85rem 1.85rem;
-  border-radius: var(--radius-md, 10px);
+  border-radius: var(--radius-pill);
   font-size: 0.9rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
   transition: transform var(--duration-fast) var(--ease-luxury),
               box-shadow var(--duration-fast) var(--ease-luxury),
               background var(--duration-fast) var(--ease-luxury),
@@ -286,45 +381,50 @@ section {
   transform: translateY(1px) scale(0.99);
 }
 
-/* Yellow brand button */
 .btn-gold {
   background: var(--gradient-gold);
-  color: var(--color-text-inverse);    /* Hard black text on signature yellow button for readability */
+  color: #1a1405;
   box-shadow: var(--shadow-gold);
 }
 
 .btn-gold:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 28px -10px rgba(255, 199, 0, 0.55);
+  box-shadow: 0 14px 32px -10px rgba(245, 179, 1, 0.55);
+  filter: brightness(1.06);
 }
 
-/* Light / Inverse Outline button */
+:root[data-theme="light"] .btn-gold {
+  color: #1a1405;
+}
+
+/* Outline button */
 .btn-outline {
   background: transparent;
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--color-primary);
+  border: 1px solid var(--color-border-strong);
 }
 
 .btn-outline:hover {
   border-color: var(--color-secondary);
-  color: var(--color-secondary);
+  color: var(--color-accent-text);
   transform: translateY(-2px);
+  background: var(--color-card);
 }
 
-/* Elevated Dark Gray Button */
+/* Elevated solid button */
 .btn-dark {
-  background: #1a1a1a;                 /* Swapped with direct color to avoid merging with dark background */
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--color-card);
+  color: var(--color-primary);
+  border: 1px solid var(--color-border);
 }
 
 .btn-dark:hover {
-  background: #242424;
+  background: var(--color-card-hover);
   transform: translateY(-2px);
   box-shadow: var(--shadow-soft);
 }
 
-/* ---- Reveal-on-scroll utility ---- */
+/* ---- Reveal on scroll ---- */
 .reveal {
   opacity: 0;
   transform: translateY(24px);
@@ -336,6 +436,7 @@ section {
   transform: translateY(0);
 }
 
+/* ---- Reduced motion ---- */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -352,7 +453,7 @@ section {
   }
 }
 
-/* Visually-hidden but accessible */
+/* ---- Utilities ---- */
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -365,12 +466,26 @@ section {
   border: 0;
 }
 
-/* Dynamic Focus curvature visibility for perfect accessibility */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
   outline: 2px solid var(--color-secondary);
-  outline-offset: 4px;
+  outline-offset: 3px;
+}
+
+/* Shared scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg-soft);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-secondary);
 }

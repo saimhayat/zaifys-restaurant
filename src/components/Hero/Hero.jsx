@@ -1,9 +1,11 @@
 import { scrollToSection } from "../../utils/scrollTo";
 import { StarIcon } from "../Icons";
-import { restaurantInfo } from "../../data/siteData";
+import { restaurantInfo, getOpenStatus } from "../../data/siteData";
 import "./Hero.css";
 
 function Hero() {
+  const status = getOpenStatus();
+
   return (
     <section id="home" className="hero">
       {/* Background Media with Spotlight Overlays */}
@@ -11,7 +13,9 @@ function Hero() {
         <img
           src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1920&q=80"
           alt=""
-          fetchpriority="high"
+          fetchPriority="high"
+          loading="eager"
+          decoding="async"
         />
         <div className="hero__overlay" />
       </div>
@@ -21,6 +25,10 @@ function Hero() {
         <div className="hero__badge">
           <StarIcon width="13" height="13" filled />
           <span>{restaurantInfo.rating} rated &middot; {restaurantInfo.reviews}+ reviews</span>
+          <span className={`hero__status ${status.isOpen ? "hero__status--open" : "hero__status--closed"}`}>
+            <span className="hero__status-dot" />
+            {status.message}
+          </span>
         </div>
 
         <p className="hero__kicker">Fine Dining &middot; Satellite Town, Rawalpindi</p>

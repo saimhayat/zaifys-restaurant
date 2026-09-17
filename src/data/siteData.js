@@ -183,6 +183,7 @@ export const restaurantInfo = {
   address: "57-B, Block B, Commercial Market, Satellite Town, Rawalpindi, Pakistan",
   phone: "+92 300 6165529",
   phoneHref: "+923006165529",
+  whatsappHref: "923006165529",
   rating: 4.3,
   reviews: 673,
   priceRange: "Rs. 1000 – 2000",
@@ -193,3 +194,74 @@ export const restaurantInfo = {
   ],
   services: ["Dine In", "Takeaway", "No Contact Delivery"],
 };
+
+export const faqs = [
+  {
+    id: 1,
+    question: "Do you take reservations?",
+    answer:
+      "Yes — book through the reservation form on this page or call us directly. Weekend evenings fill quickly, so we recommend reserving at least a day ahead for parties of 4 or more.",
+  },
+  {
+    id: 2,
+    question: "Do you offer delivery?",
+    answer:
+      "We offer no-contact delivery across Satellite Town and nearby areas, plus takeaway. Call or WhatsApp us to place a delivery order.",
+  },
+  {
+    id: 3,
+    question: "Are halal options available?",
+    answer:
+      "All of our meat is 100% halal-certified, sourced fresh every morning from trusted suppliers.",
+  },
+  {
+    id: 4,
+    question: "Can you host events or large parties?",
+    answer:
+      "Absolutely. Family gatherings, birthdays and corporate dinners are our specialty — call us and we'll arrange seating, a set menu, and a cake at no extra cutting charge.",
+  },
+  {
+    id: 5,
+    question: "Is there parking available?",
+    answer:
+      "Yes, street parking is available around Commercial Market, and our staff can help guide you to the closest spot during busy hours.",
+  },
+  {
+    id: 6,
+    question: "Do you have vegetarian and kids' options?",
+    answer:
+      "Yes — the menu includes vegetarian Chinese and continental dishes, plus a dedicated kids' section with mild spice levels.",
+  },
+];
+
+/**
+ * Live open/closed status from the weekly hours above.
+ * Returns { isOpen, message } computed at render time.
+ */
+export function getOpenStatus(now = new Date()) {
+  // Convert current time to minutes since midnight in PKT (UTC+5)
+  const pkt = new Date(now.getTime() + (5 * 60 + now.getTimezoneOffset()) * 60000);
+  const day = pkt.getDay(); // 0 = Sunday
+  const mins = pkt.getHours() * 60 + pkt.getMinutes();
+
+  const parse = (label, clock) => {
+    const m = clock.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+    if (!m) return 0;
+    let h = Number(m[1]) % 12;
+    if (m[3].toUpperCase() === "PM") h += 12;
+    return h * 60 + Number(m[2]);
+  };
+
+  // Hours table by weekday (0=Sun … 6=Sat), matching restaurantInfo.hours
+  const open = 12 * 60; // 12:00 PM default open
+  let close;
+  if (day === 5) close = parse("close", "12:30 AM") + 24 * 60; // Fri → past midnight
+  else if (day === 6 || day === 0) close = parse("close", "12:30 AM") + 24 * 60; // Sat/Sun
+  else close = parse("close", "11:30 PM");
+
+  const isOpen = mins >= open && mins <= close;
+  return {
+    isOpen,
+    message: isOpen ? "Open Now" : "Closed — Opens 12:00 PM",
+  };
+}
