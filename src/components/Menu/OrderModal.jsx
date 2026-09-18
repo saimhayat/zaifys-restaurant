@@ -13,7 +13,40 @@ function OrderModal({ item, onClose }) {
   const [notes, setNotes] = useState("");
 
   useEffect(() => {
-    document.body.style.overflow = "hidden";
+    // Lock the body and every scroll ancestor so the page behind never scrolls.
+    const lockScroll = () => {
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${document.body.getBoundingClientRect().top}px`;
+
+      const lockAncestor = (el) => {
+        if (el && el !== document.body && el.style.overflow !== "scroll" && el.scrollHeight > el.clientHeight) {
+          el.style.overflow = "hidden";
+          el.style.position = "relative";
+        }
+        if (el.parentElement) lockAncestor(el.parentElement);
+      };
+
+      lockAncestor(document.body);
+    };
+
+    const unlockScroll = () => {
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.top = "";
+
+      const unlockAncestor = (el) => {
+        if (el && el !== document.body) {
+          el.style.overflow = "";
+          el.style.position = "";
+        }
+        if (el.parentElement) unlockAncestor(el.parentElement);
+      };
+
+      unlockAncestor(document.body);
+    };
+
+    lockScroll();
 
     const handleEscape = (e) => {
       if (e.key === "Escape") onClose();
@@ -22,7 +55,7 @@ function OrderModal({ item, onClose }) {
     window.addEventListener("keydown", handleEscape);
 
     return () => {
-      document.body.style.overflow = "auto";
+      unlockScroll();
       window.removeEventListener("keydown", handleEscape);
     };
   }, [onClose]);

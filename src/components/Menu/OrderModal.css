@@ -10,11 +10,13 @@
 .order-modal-overlay {
   position: fixed;
   inset: 0;
+  height: 100dvh;
   z-index: 9999;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   padding: 2rem;
+  padding-top: 5vh;
   background: var(--color-overlay);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -28,7 +30,7 @@
 .order-modal {
   position: relative;
   width: min(1180px, 100%);
-  max-height: 92vh;
+  max-height: calc(100dvh - 4rem);
   overflow: hidden;
   display: grid;
   grid-template-columns: 48% 52%;
@@ -149,6 +151,7 @@
   background: var(--color-bg-soft);
   min-height: 0;
   z-index: 1;
+  overscroll-behavior: contain;
 }
 
 .order-modal__right::-webkit-scrollbar {
@@ -560,19 +563,24 @@
 @media (max-width: 768px) {
   .order-modal-overlay {
     padding: 0;
+    padding-top: 0;
+    align-items: flex-end;
   }
 
   .order-modal {
     width: 100%;
-    height: 100dvh;
     max-height: 100dvh;
+    height: 100dvh;
     border-radius: 0;
     grid-template-columns: 1fr;
     overflow-y: auto;
+    border-top: 1px solid var(--color-border);
   }
 
   .order-modal__left {
-    height: 300px;
+    height: 32vh;
+    min-height: 200px;
+    max-height: 280px;
   }
 
   .order-modal__right {
@@ -583,6 +591,12 @@
   .order-modal__close {
     top: 15px;
     right: 15px;
+  }
+
+  /* Scroll-lock the body/parent page when the modal content scrolls too
+     (the overlay handles the top region; the modal scrolls independently) */
+  .order-modal__right {
+    scrollbar-gutter: stable;
   }
 
   .order-modal__right h2 {
