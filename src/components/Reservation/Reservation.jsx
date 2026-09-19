@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useReveal } from "../../hooks/useReveal";
+import { addReservation } from "../../store/restaurantStore";
 import "./Reservation.css";
 
 const INITIAL_STATE = {
@@ -38,7 +39,7 @@ function Reservation() {
   const formRef = useReveal();
   const [values, setValues] = useState(INITIAL_STATE);
   const [errors, setErrors] = useState({});
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState(null);
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -56,7 +57,18 @@ function Reservation() {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      setSubmitted(true);
+      // Record the booking so it lands in the admin panel immediately.
+      // NOTE: stored in THIS browser only until a backend exists.
+      const reservation = addReservation({
+        name: values.name.trim(),
+        phone: values.phone.trim(),
+        guests: Number(values.guests),
+        date: values.date,
+        time: values.time,
+        message: values.message.trim(),
+      });
+
+      setSubmitted(reservation);
       setValues(INITIAL_STATE);
     }
   };
@@ -100,7 +112,10 @@ function Reservation() {
           {submitted && (
             <div className="reservation__success" role="status">
               <strong>Reservation request received!</strong>
-              <span>We&rsquo;ll call you shortly to confirm your table.</span>
+              <span>
+                Reference {submitted.id} — we&rsquo;ll call you shortly to confirm
+                your table.
+              </span>
             </div>
           )}
 

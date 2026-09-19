@@ -1,13 +1,15 @@
 import { useReveal } from "../../hooks/useReveal";
 import { PinIcon, PhoneIcon, ClockIcon, FacebookIcon, InstagramIcon, WhatsappIcon } from "../Icons";
-import { restaurantInfo } from "../../data/siteData";
+import { useRestaurantInfo } from "../../store/restaurantStore";
 import "./Contact.css";
-
-const MAP_QUERY = encodeURIComponent(restaurantInfo.address);
 
 function Contact() {
   const infoRef = useReveal();
   const mapRef = useReveal();
+  const restaurantInfo = useRestaurantInfo();
+
+  // Derived from the live address, so a settings edit moves the map too.
+  const MAP_QUERY = encodeURIComponent(restaurantInfo.address);
 
   return (
     <section id="contact" className="contact section-padding">

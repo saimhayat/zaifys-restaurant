@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Check } from "lucide-react";
 import { scrollToSection } from "../../utils/scrollTo";
 import { FacebookIcon, InstagramIcon, WhatsappIcon } from "../Icons";
-import { restaurantInfo } from "../../data/siteData";
+import { useRestaurantInfo } from "../../store/restaurantStore";
 import "./Footer.css";
 
 const QUICK_LINKS = [
@@ -15,6 +15,7 @@ const QUICK_LINKS = [
 ];
 
 function Footer() {
+  const restaurantInfo = useRestaurantInfo();
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
   const year = new Date().getFullYear();

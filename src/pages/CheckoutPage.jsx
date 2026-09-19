@@ -2,13 +2,14 @@ import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { ArrowLeft, Banknote, CreditCard, Check } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import { addOrder } from "../store/restaurantStore";
 import "./CheckoutPage.css";
 
 function CheckoutPage() {
   const { cartItems, cartTotal, deliveryFee, grandTotal, clearCart } = useCart();
   const navigate = useNavigate();
   
-  const [orderPlaced, setOrderPlaced] = useState(false);
+  const [placedOrder, setPlacedOrder] = useState(null);
   const [formInfo, setFormInfo] = useState({
     name: "",
     phone: "",
@@ -18,7 +19,7 @@ function CheckoutPage() {
   });
 
   // If cart is empty and order isn't placed, redirect to cart
-  if (cartItems.length === 0 && !orderPlaced) {
+  if (cartItems.length === 0 && !placedOrder) {
     return <Navigate to="/cart" replace />;
   }
 
@@ -29,17 +30,33 @@ function CheckoutPage() {
 
   const handlePlaceOrder = (e) => {
     e.preventDefault();
-    // In a real app, you'd send this to your backend here
-    console.log("Order Details:", { ...formInfo, items: cartItems, total: grandTotal });
-    clearCart(); // Empty the cart
-    setOrderPlaced(true); // Show success screen
+
+    // Record the order so it appears in the admin panel straight away.
+    // NOTE: until a backend exists this is stored in THIS browser only — the
+    // restaurant's own device will not see it. See the note in the admin panel.
+    const order = addOrder({
+      customer: {
+        name: formInfo.name,
+        phone: formInfo.phone,
+        address: formInfo.address,
+        city: formInfo.city,
+      },
+      items: cartItems,
+      subtotal: cartTotal,
+      deliveryFee,
+      total: grandTotal,
+      paymentMethod: formInfo.paymentMethod,
+    });
+
+    setPlacedOrder(order);
+    clearCart(); // Empty the cart only once the order is safely recorded
   };
 
   const backToCart = () => navigate("/cart");
   const backToHome = () => navigate("/");
 
   // Success Screen
-  if (orderPlaced) {
+  if (placedOrder) {
     return (
       <div className="checkout-page__success">
         <div className="success-card">
@@ -48,6 +65,7 @@ function CheckoutPage() {
           </div>
           <h1>Order Placed Successfully!</h1>
           <p>Thank you for your order. We are preparing your delicious food right now!</p>
+          <p className="success-card__subtext">Your order reference is <strong>{placedOrder.id}</strong>.</p>
           <p className="success-card__subtext">A confirmation call will be made to <strong>{formInfo.phone}</strong> shortly.</p>
           <button className="success-card__btn" onClick={backToHome}>
             Back to Home
@@ -129,7 +147,7 @@ function CheckoutPage() {
                   </div>
                   <div className="checkout-item__info">
                     <h4>{item.name}</h4>
-                    <small>{item.size} · {item.spice}</small>
+                    <small>{item.spice ? `${item.size} · ${item.spice}` : item.size}</small>
                   </div>
                   <div className="checkout-item__price">
                     Rs. {item.totalPrice.toLocaleString()}

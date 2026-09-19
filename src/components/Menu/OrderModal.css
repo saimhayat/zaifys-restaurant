@@ -74,7 +74,9 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   transition: transform 0.8s ease;
+  -webkit-mask-image: none;
 }
 
 .order-modal:hover .order-modal__image {
@@ -177,58 +179,112 @@
 .order-modal__rating {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  margin-top: 0.75rem;
-  margin-bottom: 1.25rem;
-  color: var(--color-secondary);
-  font-size: 1rem;
+  gap: 0.75rem;
+  margin-top: 0.35rem;
+  margin-bottom: 1.5rem;
 }
 
+/* Two stacked star rows: a muted base layer, and a filled layer clipped to the
+   dish's exact rating. The fill is absolutely positioned over the base so the
+   two can never drift out of alignment. */
 .order-modal__stars {
+  position: relative;
   display: inline-flex;
-  gap: 2px;
+  gap: 3px;
+  line-height: 0;
 }
 
-.order-modal__rating span {
+.order-modal__stars-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  display: inline-flex;
+  gap: 3px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.order-modal__star {
+  flex: 0 0 auto;
+  /* the empty track has to read as inactive — a border token is far too loud
+     here and would make 4.6 out of 5 look like a full five stars */
+  color: var(--color-text-faint);
+  fill: var(--color-text-faint);
+}
+
+.order-modal__star--on {
+  color: var(--color-secondary);
+  fill: var(--color-secondary);
+}
+
+.order-modal__rating > span:last-child {
   color: var(--color-text-muted);
-  font-size: 0.9rem;
+  font-size: 0.96rem;
   font-weight: 500;
+}
+
+/* Per-dish attribute chips */
+.order-modal__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0 0 1.5rem;
+  padding: 0;
+}
+
+.order-modal__tag {
+  border: 1px solid var(--color-border);
+  background: var(--color-card);
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-pill, 999px);
 }
 
 .order-modal__description {
   color: var(--color-text-muted);
-  line-height: 1.75;
-  font-size: 0.96rem;
-  margin-bottom: 1.75rem;
+  line-height: 1.85;
+  font-size: 1.05rem;
+  margin-bottom: 2.25rem;
+  letter-spacing: 0.01em;
 }
 
 .order-modal__meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.8rem;
-  margin-bottom: 2rem;
+  gap: 0.85rem;
+  margin-bottom: 2.5rem;
 }
 
 .order-modal__meta span {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.5rem;
   background: var(--color-card);
   border: 1px solid var(--color-border);
   color: var(--color-text-muted);
-  padding: 0.6rem 1rem;
+  padding: 0.7rem 1.2rem;
   border-radius: var(--radius-pill, 999px);
-  font-size: 0.82rem;
-  transition: border-color 0.3s, color 0.3s;
+  font-size: 0.86rem;
+  font-weight: 500;
+  transition: border-color 0.3s, color 0.3s, transform 0.25s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .order-modal__meta span svg {
   color: var(--color-secondary);
+  flex-shrink: 0;
 }
 
 .order-modal__meta span:hover {
   border-color: var(--color-border-gold);
   color: var(--color-accent-text);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
 }
 
 /* ===========================
@@ -236,21 +292,39 @@
 =========================== */
 
 .order-section {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+/* The divider sits between sections, never above the first one — the serving
+   size block opens flush under the dish summary. */
+.order-section + .order-section {
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
 }
 
 .order-section h4 {
-  margin: 0 0 1rem;
+  margin: 0 0 1.25rem;
   color: var(--color-primary);
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--color-border);
 }
 
 /* Serving cards */
 .option-group {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  gap: 1.15rem;
+}
+
+/* A dish with a single serving (a wrap, a dessert) fills the row. */
+.option-group > :only-child {
+  grid-column: 1 / -1;
 }
 
 .option {
@@ -259,124 +333,147 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 0.35rem;
-  padding: 1rem;
-  border-radius: var(--radius-md, 12px);
+  gap: 0.4rem;
+  padding: 1.1rem 1.25rem;
+  border-radius: var(--radius-lg, 16px);
   border: 1px solid var(--color-border);
   background: var(--color-card);
   cursor: pointer;
   color: var(--color-primary);
-  min-height: 52px;
-  transition: transform 0.3s, border-color 0.3s, background 0.3s, box-shadow 0.3s;
-}
-
-.option span {
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.option small {
-  color: var(--color-text-muted);
-  font-size: 0.82rem;
+  min-height: 64px;
+  transition: transform 0.25s, border-color 0.3s, background 0.3s, box-shadow 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 .option:hover {
   transform: translateY(-3px);
   border-color: var(--color-border-gold);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.3);
+}
+
+.option span {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.option small {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .option.active {
-  background: rgba(245, 179, 1, 0.1);
+  background: rgba(245, 179, 1, 0.12);
   border-color: var(--color-secondary);
-  box-shadow: 0 12px 30px rgba(245, 179, 1, 0.12);
+  box-shadow: 0 6px 20px rgba(245, 179, 1, 0.2), 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 .option.active::after {
   content: "✓";
   position: absolute;
-  top: 12px;
-  right: 14px;
-  width: 24px;
-  height: 24px;
+  top: 14px;
+  right: 16px;
+  width: 28px;
+  height: 28px;
   display: flex;
   justify-content: center;
   align-items: center;
   background: var(--gradient-gold);
   color: #1a1405;
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: 0.85rem;
+  font-weight: 800;
   border-radius: var(--radius-pill, 999px);
+  box-shadow: 0 4px 10px rgba(245, 179, 1, 0.4);
 }
 
 /* Spice selector */
 .spice-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 0.85rem;
 }
 
 .spice {
-  padding: 0.8rem 1.4rem;
+  padding: 0.9rem 1.5rem;
   background: var(--color-card);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-pill, 999px);
   color: var(--color-text-muted);
   cursor: pointer;
-  font-weight: 600;
-  min-height: 44px;
-  transition: border-color 0.3s, color 0.3s, background 0.3s, transform 0.3s;
+  font-weight: 700;
+  min-height: 50px;
+  transition: border-color 0.3s, color 0.3s, background 0.3s, transform 0.25s, box-shadow 0.25s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
 }
 
 .spice:hover {
   color: var(--color-accent-text);
   border-color: var(--color-border-gold);
   transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
 }
 
 .spice.active {
   background: var(--gradient-gold);
   border-color: transparent;
   color: #1a1405;
-  box-shadow: 0 10px 24px rgba(245, 179, 1, 0.25);
+  box-shadow: 0 8px 24px rgba(245, 179, 1, 0.35), 0 2px 8px rgba(0, 0, 0, 0.25);
+  transform: translateY(-1px);
 }
 
 /* Quantity */
 .quantity-box {
-  width: max-content;
+  width: 100%;
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   overflow: hidden;
-  border-radius: var(--radius-md, 12px);
+  border-radius: var(--radius-lg, 16px);
   background: var(--color-card);
   border: 1px solid var(--color-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  padding: 0.35rem;
 }
 
 .quantity-box button {
-  width: 52px;
-  height: 52px;
+  width: 56px;
+  height: 56px;
   border: none;
   background: transparent;
   color: var(--color-primary);
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   cursor: pointer;
-  transition: background 0.3s, color 0.3s, transform 0.2s;
+  transition: background 0.25s, color 0.25s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md, 12px);
 }
 
 .quantity-box button:hover {
-  background: rgba(245, 179, 1, 0.12);
+  background: rgba(245, 179, 1, 0.14);
   color: var(--color-accent-text);
 }
 
 .quantity-box button:active {
-  transform: scale(0.95);
+  transform: scale(0.92);
+}
+
+.quantity-box button:focus-visible {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 2px;
 }
 
 .quantity-box span {
-  min-width: 64px;
+  min-width: 72px;
   text-align: center;
   color: var(--color-primary);
-  font-size: 1.2rem;
-  font-weight: 600;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 /* Divider */
@@ -389,17 +486,18 @@
 /* Special instructions */
 .order-section textarea {
   width: 100%;
-  min-height: 110px;
+  min-height: 120px;
   resize: vertical;
-  padding: 1rem 1.1rem;
+  padding: 1.1rem 1.2rem;
   background: var(--color-card);
   border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-md, 12px);
+  border-radius: var(--radius-lg, 16px);
   color: var(--color-text);
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-family: inherit;
-  line-height: 1.6;
+  line-height: 1.7;
   transition: border-color 0.3s, box-shadow 0.3s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 768px) {
@@ -421,12 +519,13 @@
 /* Footer */
 .order-footer {
   margin-top: auto;
-  padding-top: 2rem;
+  padding-top: 2.5rem;
   border-top: 1px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
+  padding-bottom: 1rem;
 }
 
 .order-total {
@@ -436,17 +535,19 @@
 
 .order-total small {
   color: var(--color-text-muted);
-  font-size: 0.82rem;
+  font-size: 0.86rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 0.3rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
 }
 
 .order-total strong {
   color: var(--color-accent-text);
-  font-size: 1.9rem;
-  font-weight: 700;
+  font-size: 2.1rem;
+  font-weight: 800;
   line-height: 1;
+  letter-spacing: -0.02em;
 }
 
 /* Add to cart button */
@@ -456,28 +557,65 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
-  padding: 1rem 2rem;
-  min-width: 240px;
+  gap: 0.65rem;
+  padding: 1.1rem 2rem;
+  min-width: 280px;
   border: none;
   border-radius: var(--radius-pill, 999px);
   background: var(--gradient-gold);
   color: #1a1405;
-  font-size: 0.95rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s, filter 0.3s;
+  transition: transform 0.25s, box-shadow 0.3s, filter 0.3s;
+  box-shadow: 0 8px 24px rgba(245, 179, 1, 0.3);
 }
 
 .add-cart-btn:hover {
   transform: translateY(-3px);
-  filter: brightness(1.06);
-  box-shadow: 0 18px 40px rgba(245, 179, 1, 0.3);
+  filter: brightness(1.07);
+  box-shadow: 0 14px 34px rgba(245, 179, 1, 0.4);
 }
 
 .add-cart-btn:active {
   transform: scale(0.97);
+}
+
+.add-cart-btn:focus-visible {
+  outline: 3px solid var(--color-secondary);
+  outline-offset: 3px;
+}
+
+/* Sold out — inset ring instead of a border so nothing shifts by a pixel. */
+.add-cart-btn:disabled {
+  background: var(--color-card-hover);
+  color: var(--color-text-muted);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+  cursor: not-allowed;
+}
+
+.add-cart-btn:disabled:hover {
+  transform: none;
+  filter: none;
+  box-shadow: inset 0 0 0 1px var(--color-border);
+}
+
+.add-cart-btn:disabled::before {
+  display: none;
+}
+
+/* Sold-out explanation shown above the footer */
+.order-modal__notice {
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-lg, 16px);
+  border: 1px solid var(--color-border-gold);
+  background: var(--color-card);
+  color: var(--color-text-muted);
+  font-size: 0.92rem;
+  line-height: 1.6;
 }
 
 /* Shine sweep */
@@ -488,7 +626,7 @@
   left: -120%;
   width: 60%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
   transform: skewX(-25deg);
   transition: 1s;
 }
@@ -578,14 +716,20 @@
   }
 
   .order-modal__left {
-    height: 32vh;
+    position: sticky;
+    top: 0;
+    height: 48vh;
     min-height: 200px;
-    max-height: 280px;
+    max-height: 300px;
+    z-index: 2;
+    background: var(--color-card-solid);
+    border-bottom: 1px solid var(--color-border);
   }
 
   .order-modal__right {
-    padding: 1.5rem;
-    overflow: visible;
+    padding: 2rem 1.5rem 2rem 1.25rem;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .order-modal__close {
@@ -600,7 +744,10 @@
   }
 
   .order-modal__right h2 {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.25rem;
   }
 
   .option-group {

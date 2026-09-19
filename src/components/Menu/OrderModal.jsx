@@ -1,15 +1,23 @@
 import { useEffect, useState } from "react";
 import { Star, Clock, Flame, ShoppingCart } from "lucide-react";
 import { useCart } from "../../context/CartContext"; // Import the useCart hook
+import { defaultSize, formatRs, priceForSize } from "../../utils/price";
 import "./OrderModal.css";
+
+const STAR_SLOTS = Array.from({ length: 5 }, (_, i) => i);
 
 function OrderModal({ item, onClose }) {
   // Destructure addToCart from the global cart context
   const { addToCart } = useCart(); 
   
+  const isAvailable = item.available !== false;
+  const leadSize = defaultSize(item);
+
   const [quantity, setQuantity] = useState(1);
-  const [spice, setSpice] = useState("Medium");
-  const [size, setSize] = useState("Full");
+  // Heat level is per-dish data. A null means the dish has no heat setting
+  // (drinks, desserts) and the whole control is hidden.
+  const [spice, setSpice] = useState(item.spice ?? null);
+  const [size, setSize] = useState(leadSize?.label ?? "");
   const [notes, setNotes] = useState("");
 
   useEffect(() => {
@@ -60,20 +68,15 @@ function OrderModal({ item, onClose }) {
     };
   }, [onClose]);
 
-  // Base price never depends on the selected size — only the effective price does.
-  const basePrice = Number(String(item.price).replace(/[^\d]/g, ""));
-
-  const getPrice = () => {
-    if (size === "Half") {
-      return Math.round(basePrice * 0.6);
-    }
-
-    return basePrice;
-  };
-
-  const total = getPrice() * quantity;
+  // The price is the selected size's price, read straight from the data —
+  // nothing is derived from ratios, so a label can never drift from the total.
+  const unitPrice = priceForSize(item, size);
+  const total = unitPrice * quantity;
+  const ratingPercent = Math.max(0, Math.min(100, ((item.rating ?? 0) / 5) * 100));
 
   const handleAddToCartClick = () => {
+    if (!isAvailable) return;
+
     const cartItem = {
       id: item.id || item.name, // Fallback to name if id doesn't exist
       name: item.name,
@@ -82,7 +85,7 @@ function OrderModal({ item, onClose }) {
       spice,
       size,
       notes,
-      unitPrice: getPrice(),
+      unitPrice,
       totalPrice: total,
     };
 
@@ -110,59 +113,96 @@ function OrderModal({ item, onClose }) {
         <div className="order-modal__right">
           <h2>{item.name}</h2>
 
-          <div className="order-modal__rating">
-            <span className="order-modal__stars" aria-label="Rated 4.8 out of 5">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} size={15} fill="currentColor" strokeWidth={0} />
+          <div
+            className="order-modal__rating"
+            aria-label={`Rated ${item.rating} out of 5 from ${item.reviewCount} reviews`}
+          >
+            {/* Two stacked rows of stars: an outlined base layer, and a filled
+                layer clipped to the exact rating, so 4.6 genuinely reads 4.6. */}
+            <span className="order-modal__stars" aria-hidden="true">
+              {STAR_SLOTS.map((slot) => (
+                <Star
+                  key={`base-${slot}`}
+                  size={15}
+                  strokeWidth={0}
+                  className="order-modal__star"
+                />
               ))}
+              <span
+                className="order-modal__stars-fill"
+                style={{ width: `${ratingPercent}%` }}
+              >
+                {STAR_SLOTS.map((slot) => (
+                  <Star
+                    key={`fill-${slot}`}
+                    size={15}
+                    strokeWidth={0}
+                    className="order-modal__star order-modal__star--on"
+                  />
+                ))}
+              </span>
             </span>
-            <span>4.8 (184 Reviews)</span>
+            <span>
+              {item.rating?.toFixed(1)} · {item.reviewCount} reviews
+            </span>
           </div>
 
           <p className="order-modal__description">{item.description}</p>
 
+          <ul className="order-modal__tags">
+            {item.tags.map((tag) => (
+              <li key={tag} className="order-modal__tag">
+                {tag}
+              </li>
+            ))}
+          </ul>
+
           <div className="order-modal__meta">
-            <span><Clock size={14} strokeWidth={2} /> 20-30 mins</span>
-            <span><Flame size={14} strokeWidth={2} /> Bestseller</span>
+            <span>
+              <Clock size={14} strokeWidth={2} /> {item.prepTime} min prep
+            </span>
+            {item.badge && (
+              <span>
+                <Flame size={14} strokeWidth={2} /> {item.badge}
+              </span>
+            )}
           </div>
 
           {/* Serving */}
           <div className="order-section">
             <h4>Serving Size</h4>
             <div className="option-group">
-              <button
-                className={size === "Half" ? "option active" : "option"}
-                onClick={() => setSize("Half")}
-              >
-                <span>Half</span>
-                <small>Rs. {Math.round(basePrice * 0.6).toLocaleString()}</small>
-              </button>
-
-              <button
-                className={size === "Full" ? "option active" : "option"}
-                onClick={() => setSize("Full")}
-              >
-                <span>Full</span>
-                <small>Rs. {basePrice.toLocaleString()}</small>
-              </button>
-            </div>
-          </div>
-
-          {/* Spice */}
-          <div className="order-section">
-            <h4>Spice Level</h4>
-            <div className="spice-group">
-              {["Mild", "Medium", "Hot"].map((level) => (
+              {item.sizes.map((option) => (
                 <button
-                  key={level}
-                  className={spice === level ? "spice active" : "spice"}
-                  onClick={() => setSpice(level)}
+                  key={option.label}
+                  className={size === option.label ? "option active" : "option"}
+                  onClick={() => setSize(option.label)}
+                  aria-pressed={size === option.label}
                 >
-                  {level}
+                  <span>{option.label}</span>
+                  <small>{formatRs(option.price)}</small>
                 </button>
               ))}
             </div>
           </div>
+
+          {/* Spice — drinks and desserts carry no heat level, so they skip this */}
+          {item.spice && (
+            <div className="order-section">
+              <h4>Spice Level</h4>
+              <div className="spice-group">
+                {["Mild", "Medium", "Hot"].map((level) => (
+                  <button
+                    key={level}
+                    className={spice === level ? "spice active" : "spice"}
+                    onClick={() => setSpice(level)}
+                  >
+                    {level}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Quantity */}
           <div className="order-section">
@@ -184,14 +224,26 @@ function OrderModal({ item, onClose }) {
             />
           </div>
 
+          {!isAvailable && (
+            <div className="order-modal__notice" role="status">
+              This dish is sold out right now. Ask us and we&rsquo;ll suggest
+              something close to it.
+            </div>
+          )}
+
           {/* Footer */}
           <div className="order-footer">
             <div className="order-total">
               <small>Total</small>
-              <strong>Rs. {total.toLocaleString()}</strong>
+              <strong>{formatRs(total)}</strong>
             </div>
-            <button className="add-cart-btn" onClick={handleAddToCartClick}>
-              <ShoppingCart size={17} strokeWidth={2} /> Add To Cart
+            <button
+              className="add-cart-btn"
+              onClick={handleAddToCartClick}
+              disabled={!isAvailable}
+            >
+              <ShoppingCart size={17} strokeWidth={2} />
+              {isAvailable ? "Add To Cart" : "Sold Out"}
             </button>
           </div>
         </div>

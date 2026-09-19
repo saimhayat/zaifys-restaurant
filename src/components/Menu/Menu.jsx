@@ -1,15 +1,22 @@
 import { useMemo, useState } from "react";
-import { Search, X } from "lucide-react";
+import { Clock, Search, X } from "lucide-react";
 import { useReveal } from "../../hooks/useReveal";
-import { menuCategories, menuItems } from "../../data/menuData";
+import { menuCategories } from "../../data/menuData";
+import { useAdminMenu } from "../../store/restaurantStore";
+import { defaultSize, formatRs } from "../../utils/price";
 import OrderModal from "./OrderModal";
 import "./Menu.css";
 
 function MenuCard({ item, onOrder }) {
   const ref = useReveal();
+  const isSoldOut = item.available === false;
+  const leadSize = defaultSize(item);
 
   return (
-    <article ref={ref} className="menu-card reveal">
+    <article
+      ref={ref}
+      className={`menu-card reveal ${isSoldOut ? "menu-card--soldout" : ""}`}
+    >
       <div className="menu-card__image">
         <img
           src={item.image}
@@ -22,6 +29,13 @@ function MenuCard({ item, onOrder }) {
         <span className="menu-card__category">
           {item.category}
         </span>
+
+        <span className="menu-card__prep">
+          <Clock size={12} strokeWidth={2.25} aria-hidden="true" />
+          {item.prepTime} min
+        </span>
+
+        {isSoldOut && <span className="menu-card__soldout">Sold Out</span>}
       </div>
 
       <div className="menu-card__body">
@@ -29,7 +43,7 @@ function MenuCard({ item, onOrder }) {
           <h3>{item.name}</h3>
 
           <span className="menu-card__price">
-            {item.price}
+            {formatRs(leadSize?.price)}
           </span>
         </div>
 
@@ -37,22 +51,33 @@ function MenuCard({ item, onOrder }) {
           {item.description}
         </p>
 
+        <ul className="menu-card__tags">
+          {item.tags.slice(0, 2).map((tag) => (
+            <li key={tag} className="menu-card__tag">
+              {tag}
+            </li>
+          ))}
+        </ul>
+
         <button
           className="menu-card__order"
-          aria-label={`Order ${item.name}`}
+          aria-label={isSoldOut ? `${item.name} is sold out` : `Order ${item.name}`}
           onClick={() => onOrder(item)}
+          disabled={isSoldOut}
         >
-          <span>Order Now</span>
+          <span>{isSoldOut ? "Sold Out" : "Order Now"}</span>
 
-          <svg
-            className="menu-card__order-icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <path d="M5 12h14M13 6l6 6-6 6" />
-          </svg>
+          {!isSoldOut && (
+            <svg
+              className="menu-card__order-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          )}
         </button>
       </div>
     </article>
@@ -60,6 +85,10 @@ function MenuCard({ item, onOrder }) {
 }
 
 function Menu() {
+  // The live menu — admin edits (price, availability, badges, tags) appear
+  // here immediately because both read the same store.
+  const menuItems = useAdminMenu();
+
   const [activeCategory, setActiveCategory] = useState("All");
   const [query, setQuery] = useState("");
 
@@ -82,7 +111,7 @@ function Menu() {
       );
     }
     return items;
-  }, [activeCategory, query]);
+  }, [activeCategory, query, menuItems]);
 
   return (
     <>

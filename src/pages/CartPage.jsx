@@ -4,7 +4,7 @@ import { useCart } from "../context/CartContext";
 import "./CartPage.css";
 
 function CartPage() {
-  const { cartItems, updateQuantity, removeFromCart, cartTotal, deliveryFee, grandTotal, clearCart } = useCart();
+  const { cartItems, updateQuantity, removeFromCart, cartTotal, deliveryFee, grandTotal, clearCart, qualifiesForFreeDelivery, freeDeliveryGap, freeDeliveryOver } = useCart();
   const navigate = useNavigate();
 
   const goToMenu = () => {
@@ -61,7 +61,7 @@ function CartPage() {
                   <h3 className="cart-item__name">{item.name}</h3>
                   <div className="cart-item__tags">
                     <span>{item.size}</span>
-                    <span>{item.spice} Spice</span>
+                    {item.spice && <span>{item.spice} Spice</span>}
                   </div>
                   {item.notes && <p className="cart-item__notes">📝 {item.notes}</p>}
                   
@@ -97,9 +97,15 @@ function CartPage() {
               <span>Delivery Fee</span>
               <span>Rs. {deliveryFee.toLocaleString()}</span>
             </div>
-            <div className="cart-summary__row cart-summary__row--muted">
-              <span>Free delivery on orders over Rs. 5000</span>
-            </div>
+            {freeDeliveryOver > 0 && (
+              <div className="cart-summary__row cart-summary__row--muted">
+                <span>
+                  {qualifiesForFreeDelivery
+                    ? "Free delivery unlocked"
+                    : `Add Rs. ${freeDeliveryGap.toLocaleString()} more for free delivery`}
+                </span>
+              </div>
+            )}
 
             <div className="cart-summary__divider"></div>
 

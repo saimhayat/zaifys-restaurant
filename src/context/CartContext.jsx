@@ -1,4 +1,5 @@
 import { createContext, useState, useContext, useEffect } from "react";
+import { computeTotals, useRestaurantInfo } from "../store/restaurantStore";
 
 const CartContext = createContext();
 
@@ -23,6 +24,9 @@ export const CartProvider = ({ children }) => {
       console.error("Failed to save cart to localStorage");
     }
   }, [cartItems]);
+
+  // Delivery fee and free-delivery threshold are managed in the admin panel.
+  const settings = useRestaurantInfo();
 
   // Check if item exists (same id, size, and spice level)
   const addToCart = (item) => {
@@ -59,8 +63,14 @@ export const CartProvider = ({ children }) => {
   // Changed this line to count unique items instead of total quantity
   const totalItems = cartItems.length; 
   
-  const deliveryFee = cartTotal > 0 ? 150 : 0;
-  const grandTotal = cartTotal + deliveryFee;
+  // Delivery fee and the free-delivery threshold live in admin settings, so
+  // the cart and the settings panel can never disagree.
+  const {
+    deliveryFee,
+    total: grandTotal,
+    qualifiesForFreeDelivery,
+    freeDeliveryGap,
+  } = computeTotals(cartTotal, settings);
 
   return (
     <CartContext.Provider
@@ -74,6 +84,9 @@ export const CartProvider = ({ children }) => {
         totalItems,
         deliveryFee,
         grandTotal,
+        qualifiesForFreeDelivery,
+        freeDeliveryGap,
+        freeDeliveryOver: settings.freeDeliveryOver,
       }}
     >
       {children}

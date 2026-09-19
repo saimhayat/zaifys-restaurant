@@ -4,7 +4,7 @@ import { ChevronDown, X, ShoppingCart } from "lucide-react";
 import { scrollToSection } from "../../utils/scrollTo";
 import { PhoneIcon } from "../Icons";
 import ThemeToggle from "../ThemeToggle/ThemeToggle";
-import { restaurantInfo } from "../../data/siteData";
+import { useRestaurantInfo } from "../../store/restaurantStore";
 import { useCart } from "../../context/CartContext";
 import "./Navbar.css";
 
@@ -24,6 +24,7 @@ const LOCATION_DATA = {
 };
 
 function Navbar() {
+  const restaurantInfo = useRestaurantInfo();
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [currentLocation, setCurrentLocation] = useState("Select Location");

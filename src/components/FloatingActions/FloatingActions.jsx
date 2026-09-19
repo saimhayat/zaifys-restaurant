@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { ArrowUp, MessageCircle, Phone } from "lucide-react";
-import { restaurantInfo } from "../../data/siteData";
+import { useRestaurantInfo } from "../../store/restaurantStore";
 import "./FloatingActions.css";
 
 function FloatingActions() {
+  const restaurantInfo = useRestaurantInfo();
   const [showTop, setShowTop] = useState(false);
 
   useEffect(() => {
