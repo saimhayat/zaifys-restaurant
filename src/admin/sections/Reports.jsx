@@ -15,14 +15,16 @@ import {
   deriveReport,
   useAdminStore,
 } from "../../store/restaurantStore";
-import { EmptyState, FilterTabs, PageHeader, StatCard } from "../ui";
+import { EmptyState, FilterTabs, PageHeader, RevenueChart, StatCard } from "../ui";
 import { downloadCsv, formatRs, toCsv } from "../format";
 
 /**
  * Horizontal bar list used for every breakdown on this page.
  *
  * A ranked bar is used instead of a pie or donut because it stays legible at
- * 320px wide, prints cleanly, and needs no chart dependency.
+ * 320px wide, prints cleanly, and needs no chart dependency. Each row carries
+ * its rank and its share of the period total, so the list reads like a proper
+ * report rather than a set of unanchored bars.
  */
 function BarList({ rows, format, emptyMessage }) {
   if (rows.length === 0) {
@@ -30,20 +32,35 @@ function BarList({ rows, format, emptyMessage }) {
   }
 
   const peak = Math.max(...rows.map((row) => row.value), 1);
+  const total = rows.reduce((sum, row) => sum + row.value, 0);
 
   return (
     <div className="admin-barlist">
-      {rows.map((row) => (
+      {rows.map((row, index) => (
         <div key={row.label} className="admin-barlist__row">
-          <div className="admin-barlist__top">
-            <span className="admin-barlist__label">{row.label}</span>
-            <span className="admin-barlist__value">{format(row)}</span>
-          </div>
-          <div className="admin-barlist__track">
-            <div
-              className="admin-barlist__fill"
-              style={{ width: `${Math.max((row.value / peak) * 100, 2)}%` }}
-            />
+          {rows.length > 1 && (
+            <span className="admin-barlist__rank" aria-hidden="true">
+              {index + 1}
+            </span>
+          )}
+          <div className="admin-barlist__main">
+            <div className="admin-barlist__top">
+              <span className="admin-barlist__label">{row.label}</span>
+              <span className="admin-barlist__value">
+                {format(row)}
+                {total > 0 && row.value > 0 && (
+                  <span className="admin-barlist__share">
+                    {Math.round((row.value / total) * 100)}%
+                  </span>
+                )}
+              </span>
+            </div>
+            <div className="admin-barlist__track">
+              <div
+                className="admin-barlist__fill"
+                style={{ width: `${Math.max((row.value / peak) * 100, 2)}%` }}
+              />
+            </div>
           </div>
         </div>
       ))}
@@ -67,8 +84,6 @@ function Reports() {
     () => deriveOrderTrend(state.orders, trendDays),
     [state.orders, trendDays]
   );
-  const trendPeak = Math.max(...trend.map((day) => day.revenue), 1);
-  const labelStep = trendDays > 14 ? 5 : 1;
 
   const exportSummary = () => {
     const resByDate = new Map();
@@ -267,25 +282,12 @@ function Reports() {
         <div className="admin-card__head" style={{ padding: "0 0 1.1rem", border: "none" }}>
           <div>
             <h2>Revenue, last {trendDays} days</h2>
-            <p>Daily takings against the busiest day</p>
+            <p>Daily takings — hover or hold a bar for detail</p>
           </div>
           <span className="admin-row__amount">{formatRs(report.revenue)} in period</span>
         </div>
 
-        <div className="admin-trend">
-          {trend.map((day, index) => (
-            <div key={day.date} className="admin-trend__col">
-              <div
-                className="admin-trend__bar"
-                style={{ height: `${Math.max((day.revenue / trendPeak) * 100, 3)}%` }}
-                title={`${day.date}: ${formatRs(day.revenue)} from ${day.orders} orders`}
-              />
-              <span className="admin-trend__label">
-                {index % labelStep === 0 ? day.label.slice(0, 2) : ""}
-              </span>
-            </div>
-          ))}
-        </div>
+        <RevenueChart days={trend} label={`Revenue, last ${trendDays} days`} />
       </section>
 
       <section className="admin-card">

@@ -15,7 +15,7 @@ import {
   deriveTopDishes,
   useAdminStore,
 } from "../../store/restaurantStore";
-import { EmptyState, PageHeader, StatCard, StatusPill } from "../ui";
+import { EmptyState, PageHeader, RevenueChart, StatCard, StatusPill } from "../ui";
 import { formatRelative, formatRs } from "../format";
 
 function Dashboard() {
@@ -31,7 +31,6 @@ function Dashboard() {
     (reservation) => reservation.status === "pending"
   );
 
-  const trendPeak = Math.max(...trend.map((day) => day.revenue), 1);
   const recentOrders = state.orders.slice(0, 6);
 
   return (
@@ -183,24 +182,12 @@ function Dashboard() {
         <div className="admin-card__head" style={{ padding: "0 0 1rem", border: "none" }}>
           <div>
             <h2>Revenue, last 7 days</h2>
-            <p>Bars are scaled to the busiest day</p>
+            <p>Daily takings — hover or hold a bar for detail</p>
           </div>
           <span className="admin-row__amount">{formatRs(stats.lifetimeRevenue)} lifetime</span>
         </div>
 
-        <div className="admin-trend">
-          {trend.map((day) => (
-            <div key={day.date} className="admin-trend__col">
-              <span className="admin-trend__value">{day.revenue > 0 ? day.revenue : ""}</span>
-              <div
-                className="admin-trend__bar"
-                style={{ height: `${Math.max((day.revenue / trendPeak) * 100, 3)}%` }}
-                title={`${day.label}: ${formatRs(day.revenue)} from ${day.orders} orders`}
-              />
-              <span className="admin-trend__label">{day.label}</span>
-            </div>
-          ))}
-        </div>
+        <RevenueChart days={trend} label="Revenue, last 7 days" />
       </section>
     </>
   );

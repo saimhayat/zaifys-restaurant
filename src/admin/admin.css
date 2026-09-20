@@ -228,6 +228,11 @@
   font-weight: 600;
   color: var(--color-primary);
   margin: 0;
+  /* Let the title shrink and truncate instead of pushing the topbar wide. */
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .admin-topbar__spacer {
@@ -1108,45 +1113,161 @@
 .admin-banner strong { color: inherit; }
 
 /* ===========================
-   Trend chart
+   Revenue chart (column chart)
+
+   --chart-label-h  height of the day-label row under the bars
+   --chart-head     headroom reserved above the bars for value labels
+   Bars and gridlines are positioned with the same calc() so they always
+   agree, whatever the container height.
 =========================== */
 
-.admin-trend {
-  display: flex;
-  align-items: flex-end;
-  gap: 0.6rem;
-  height: 150px;
-  padding-top: 0.5rem;
+.admin-chart {
+  --chart-label-h: 22px;
+  --chart-head: 20px;
+
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0 0.6rem;
+  height: 200px;
 }
 
-.admin-trend__col {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.45rem;
+.admin-chart__axis {
+  position: relative;
   height: 100%;
 }
 
-.admin-trend__bar {
-  width: 100%;
-  max-width: 46px;
-  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-  background: var(--gradient-gold);
-  min-height: 4px;
-  transition: height 0.4s var(--ease-luxury);
-}
-
-.admin-trend__label {
-  font-size: 0.72rem;
+.admin-chart__axis span {
+  position: absolute;
+  right: 0;
+  transform: translateY(50%);
+  font-size: 0.62rem;
+  font-weight: 600;
   color: var(--color-text-muted);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  bottom: calc(
+    var(--chart-label-h) + var(--chart-head) +
+      (100% - var(--chart-label-h) - var(--chart-head)) * var(--tick)
+  );
 }
 
-.admin-trend__value {
-  font-size: 0.74rem;
+.admin-chart__scroller {
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-chart__cols {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  height: 100%;
+}
+
+/* Zero baseline under the bars. */
+.admin-chart__cols::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--chart-label-h);
+  border-bottom: 1px solid var(--color-border-strong);
+}
+
+/* Absolute, so the grid never participates in the columns' flex layout. */
+.admin-chart__grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.admin-chart__grid span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1px dashed var(--color-border);
+  bottom: calc(
+    var(--chart-label-h) + var(--chart-head) +
+      (100% - var(--chart-label-h) - var(--chart-head)) * var(--line)
+  );
+}
+
+.admin-chart__col {
+  flex: 1 0 30px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-chart__colplot {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.admin-chart__bar {
+  position: relative;
+  width: 100%;
+  max-width: 42px;
+  border-radius: 5px 5px 2px 2px;
+  background: var(--gradient-gold);
+  transition: filter 0.2s;
+}
+
+.admin-chart__bar--zero {
+  height: 2px;
+  background: var(--color-border-strong);
+  border-radius: 2px;
+}
+
+.admin-chart__col:hover .admin-chart__bar {
+  filter: brightness(1.12);
+}
+
+/* Busiest day of the window pops slightly more than the rest. */
+.admin-chart__col--peak .admin-chart__bar {
+  filter: saturate(1.15) brightness(1.06);
+  box-shadow: var(--shadow-gold);
+}
+
+.admin-chart__value {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.62rem;
   font-weight: 700;
   color: var(--color-text-muted);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-chart__col--peak .admin-chart__value {
+  color: var(--color-accent-text);
+}
+
+/* Dense windows (30 days) label only the peak — the rest on hover. */
+.admin-chart__cols--dense .admin-chart__value {
+  visibility: hidden;
+}
+
+.admin-chart__cols--dense .admin-chart__col--peak .admin-chart__value,
+.admin-chart__col:hover .admin-chart__value {
+  visibility: visible;
+}
+
+.admin-chart__label {
+  height: var(--chart-label-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.62rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
 }
 
 /* ===========================
@@ -1529,13 +1650,12 @@
     width: 100%;
   }
 
-  .admin-trend {
-    height: 120px;
-    gap: 0.35rem;
+  .admin-chart {
+    height: 170px;
   }
 
-  .admin-trend__bar {
-    max-width: 100%;
+  .admin-chart__col {
+    flex-basis: 26px;
   }
 
   .admin-stat__value {
@@ -1592,13 +1712,51 @@
   .admin-page-head__actions .admin-btn {
     flex: 1;
   }
+
+  /* Small phones: a long page title must not push the topbar controls off
+     screen — it truncates with an ellipsis instead. */
+  .admin-topbar {
+    gap: 0.6rem;
+  }
+
+  .admin-login__card {
+    padding: 1.6rem 1.25rem;
+  }
+
+  .admin-content {
+    padding: 1.1rem 1rem 3.5rem;
+  }
+
+  .admin-chart {
+    height: 160px;
+  }
+
+  .admin-chart__axis span {
+    font-size: 0.56rem;
+  }
+}
+
+/* Narrowest supported width — everything that still pinches at 360px. */
+@media (max-width: 400px) {
+  /* Size editor (name + price + remove) has no room for three columns. */
+  .admin-size-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-size-row__price {
+    justify-content: flex-start;
+  }
+
+  .admin-size-row .admin-icon-btn {
+    justify-self: start;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .admin-drawer,
   .admin-drawer-overlay,
   .admin-sidebar,
-  .admin-trend__bar,
+  .admin-chart__bar,
   .admin-toast {
     animation: none !important;
     transition: none !important;
@@ -1616,9 +1774,39 @@
 }
 
 .admin-barlist__row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.55rem;
+  align-items: start;
+}
+
+.admin-barlist__main {
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+}
+
+.admin-barlist__rank {
+  width: 1.4rem;
+  height: 1.4rem;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-pill);
+  background: var(--color-card-hover);
+  color: var(--color-text-muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  margin-top: 1px;
+}
+
+/* Rank 1 wears the house colour. */
+.admin-barlist__row:first-child .admin-barlist__rank {
+  background: var(--admin-warn-bg);
+  color: var(--admin-warn-fg);
+  border: 1px solid var(--admin-warn-bd);
 }
 
 .admin-barlist__top {
@@ -1645,10 +1833,24 @@
   white-space: nowrap;
 }
 
+/* Share-of-total badge sitting after the row's value. */
+.admin-barlist__share {
+  margin-left: 0.45rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
+  background: var(--color-card-hover);
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
 .admin-barlist__track {
   height: 8px;
   border-radius: var(--radius-pill);
   background: var(--color-card-hover);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
 

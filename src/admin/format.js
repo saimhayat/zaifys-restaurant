@@ -9,6 +9,24 @@
 export { formatRs } from "../utils/price";
 
 /**
+ * Compact rupees for chart axes and tight labels: 0 → "Rs 0",
+ * 4500 → "Rs 4.5k", 125000 → "Rs 1.25L". South-Asian lakh notation,
+ * because that is how the staff already read large takings.
+ */
+export function formatRsCompact(value) {
+  const amount = Number(value) || 0;
+  if (amount >= 100000) {
+    const lakhs = amount / 100000;
+    return `Rs ${lakhs >= 10 ? Math.round(lakhs) : Math.round(lakhs * 100) / 100}L`;
+  }
+  if (amount >= 1000) {
+    const thousands = amount / 1000;
+    return `Rs ${thousands >= 10 ? Math.round(thousands) : Math.round(thousands * 10) / 10}k`;
+  }
+  return `Rs ${amount}`;
+}
+
+/**
  * Normalises a locally-typed Pakistani number into the digits-only,
  * country-coded form `wa.me` expects: "0300 1234567" → "923001234567".
  */

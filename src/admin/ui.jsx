@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Inbox, Search, X } from "lucide-react";
+import { formatRs, formatRsCompact } from "./format";
 
 /**
  * Small presentational primitives shared by every admin section.
@@ -243,6 +244,124 @@ export function DetailRow({ label, value, strong }) {
     <div className={`admin-detail-row ${strong ? "admin-detail-row--strong" : ""}`}>
       <span>{label}</span>
       <span>{value}</span>
+    </div>
+  );
+}
+
+/**
+ * Rounds a value up to the nearest "nice" axis maximum (1 / 2 / 2.5 / 5 × 10ⁿ),
+ * so gridline labels read as round amounts rather than raw data peaks.
+ */
+function niceAxisMax(value) {
+  if (value <= 0) return 1;
+  const exponent = Math.floor(Math.log10(value));
+  const base = 10 ** exponent;
+  const units = value / base;
+  const nice = units <= 1 ? 1 : units <= 2 ? 2 : units <= 2.5 ? 2.5 : units <= 5 ? 5 : 10;
+  return nice * base;
+}
+
+/**
+ * Daily revenue column chart.
+ *
+ * Hand-rolled rather than a chart library on purpose: the panel has no chart
+ * dependency, this stays theme-aware through the shared CSS variables, and it
+ * scrolls horizontally on phones instead of squeezing thirty bars into
+ * unreadable slivers.
+ *
+ * `days` is the `deriveOrderTrend` shape: `{ label, date, orders, revenue }[]`.
+ */
+export function RevenueChart({ days, label = "Revenue" }) {
+  const peakRevenue = Math.max(...days.map((day) => day.revenue), 0);
+  const peakIndex = days.reduce(
+    (best, day, index) => (day.revenue > days[best].revenue ? index : best),
+    0
+  );
+
+  if (days.length === 0 || peakRevenue === 0) {
+    return (
+      <p className="admin-barlist__empty">
+        No revenue recorded in this window yet — bars appear as completed orders
+        come in.
+      </p>
+    );
+  }
+
+  const axisMax = niceAxisMax(peakRevenue);
+  const dense = days.length > 10;
+  const labelEvery = days.length > 20 ? 5 : days.length > 8 ? 2 : 1;
+  const first = new Date(days[0].date);
+  const last = new Date(days[days.length - 1].date);
+  const summary = `${label} from ${first.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+  })} to ${last.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+  })}. Best day ${days[peakIndex].label} at ${formatRs(days[peakIndex].revenue)}.`;
+
+  return (
+    <div className="admin-chart" role="img" aria-label={summary}>
+      <div className="admin-chart__axis" aria-hidden="true">
+        <span style={{ "--tick": 1 }}>{formatRsCompact(axisMax)}</span>
+        <span style={{ "--tick": 0.75 }}>{formatRsCompact(axisMax * 0.75)}</span>
+        <span style={{ "--tick": 0.5 }}>{formatRsCompact(axisMax * 0.5)}</span>
+        <span style={{ "--tick": 0.25 }}>{formatRsCompact(axisMax * 0.25)}</span>
+      </div>
+
+      <div className="admin-chart__scroller">
+        <div
+          className={`admin-chart__cols ${dense ? "admin-chart__cols--dense" : ""}`}
+          style={{ "--cols": days.length }}
+        >
+          <div className="admin-chart__grid" aria-hidden="true">
+            <span style={{ "--line": 1 }} />
+            <span style={{ "--line": 0.75 }} />
+            <span style={{ "--line": 0.5 }} />
+            <span style={{ "--line": 0.25 }} />
+          </div>
+
+          {days.map((day, index) => {
+            const isPeak = index === peakIndex;
+            const isZero = day.revenue === 0;
+            const showLabel = index % labelEvery === 0 || index === days.length - 1;
+
+            return (
+              <div
+                key={day.date}
+                className={`admin-chart__col ${isPeak ? "admin-chart__col--peak" : ""}`}
+                title={`${day.label}: ${formatRs(day.revenue)} from ${day.orders} ${
+                  day.orders === 1 ? "order" : "orders"
+                }`}
+              >
+                <div className="admin-chart__colplot">
+                  {isZero ? (
+                    <div className="admin-chart__bar admin-chart__bar--zero" />
+                  ) : (
+                    <div
+                      className="admin-chart__bar"
+                      style={{
+                        /* Scaled against the nice axis max, minus the
+                           headroom that keeps value labels unclipped. */
+                        height: `calc((100% - var(--chart-head, 20px)) * ${(
+                          day.revenue / axisMax
+                        ).toFixed(4)})`,
+                      }}
+                    >
+                      <span className="admin-chart__value">
+                        {formatRsCompact(day.revenue)}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <span className="admin-chart__label">
+                  {showLabel ? day.label.slice(0, 2) : ""}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
