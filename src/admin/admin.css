@@ -99,6 +99,9 @@
   top: 0;
   height: 100vh;
   overflow-y: auto;
+  /* The nav is its own scroll region, so wheel/touch scrolling inside it
+     must not chain out to the page behind. */
+  overscroll-behavior: contain;
 }
 
 .admin-brand {
@@ -124,12 +127,42 @@
   box-shadow: var(--shadow-gold);
 }
 
+.admin-brand__text {
+  min-width: 0;
+}
+
 .admin-brand__text strong {
   display: block;
   font-family: var(--font-display);
   font-size: 0.98rem;
   color: var(--color-primary);
   line-height: 1.2;
+  /* A long restaurant name truncates rather than shoving the close button
+     off the edge of the drawer. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Dismiss control for the off-canvas drawer. Hidden on desktop, where the
+   sidebar is a permanent column and needs no close affordance. */
+.admin-sidebar__close {
+  display: none;
+  width: 40px;
+  height: 40px;
+  margin-left: auto;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-card);
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.admin-sidebar__close:hover {
+  background: var(--color-card-hover);
+  border-color: var(--color-border-gold);
 }
 
 .admin-brand__text span {
@@ -820,6 +853,9 @@
 .admin-drawer-overlay {
   position: fixed;
   inset: 0;
+  /* `dvh` tracks the visible viewport, so the panel's footer button stays
+     above a phone's browser chrome instead of hiding under it. */
+  height: 100dvh;
   z-index: 9998;
   background: var(--color-overlay);
   backdrop-filter: blur(6px);
@@ -872,6 +908,8 @@
 .admin-drawer__foot {
   border-top: 1px solid var(--color-border);
   padding: 1rem 1.35rem;
+  /* Clear of the home indicator on phones. */
+  padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
   display: flex;
   gap: 0.6rem;
   flex-wrap: wrap;
@@ -1606,6 +1644,12 @@
     z-index: 60;
     width: min(280px, 82vw);
     height: 100%;
+    /* `100%` of the layout viewport on iOS measures the toolbar-hidden size,
+       which parks the sign-out button under the browser chrome; `dvh` tracks
+       what is actually on screen. */
+    height: 100dvh;
+    /* Keep the footer clear of the home indicator. */
+    padding-bottom: max(1.15rem, env(safe-area-inset-bottom, 0px));
     transform: translateX(-100%);
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     box-shadow: none;
@@ -1614,6 +1658,10 @@
   .admin--nav-open .admin-sidebar {
     transform: translateX(0);
     box-shadow: var(--shadow-soft);
+  }
+
+  .admin-sidebar__close {
+    display: grid;
   }
 
   .admin-nav-scrim {
@@ -1724,7 +1772,21 @@
   }
 
   .admin-content {
-    padding: 1.1rem 1rem 3.5rem;
+    padding: 1.1rem 1rem calc(3.5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* iOS Safari zooms the whole page in when a focused control's text is under
+     16px, and never zooms back out — every admin input is below that. On
+     phones they all get a full 16px so tapping a field just places the caret. */
+  .admin-search input,
+  .admin-field input,
+  .admin-field select,
+  .admin-field textarea,
+  .admin-size-input input,
+  .admin-size-row > input,
+  .admin-size-row__price input,
+  .admin-inline-add input {
+    font-size: 1rem;
   }
 
   .admin-chart {
@@ -2018,8 +2080,21 @@
   .admin-toasts {
     right: 0.75rem;
     left: 0.75rem;
-    bottom: 0.75rem;
+    /* Clear of the home indicator, so an alert is never half off-screen. */
+    bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
     width: auto;
+  }
+
+  /* Drops the legacy double-tap-zoom delay from the panel's main tap
+     targets, so a tap registers the moment it lands. */
+  .admin-btn,
+  .admin-tab,
+  .admin-icon-btn,
+  .admin-nav__item,
+  .admin-hamburger,
+  .admin-sidebar__close,
+  .admin-alert-toggle {
+    touch-action: manipulation;
   }
 
   .admin-alert-toggle span {

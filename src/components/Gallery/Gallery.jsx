@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
+import { useBodyScrollLock } from "../../hooks/useBodyScrollLock";
 import { useReveal } from "../../hooks/useReveal";
 import { CloseIcon, ChevronIcon } from "../Icons";
 import { galleryFilters, galleryImages } from "../../data/siteData";
@@ -18,6 +19,10 @@ function Gallery() {
   const openLightbox = (index) => setLightboxIndex(index);
   const closeLightbox = () => setLightboxIndex(null);
 
+  // The lightbox covers the page, so the page behind it must not scroll —
+  // including on a phone, where a swipe on a body-only lock still scrolls.
+  useBodyScrollLock(lightboxIndex !== null);
+
   const showNext = () =>
     setLightboxIndex((prev) => (prev + 1) % filteredImages.length);
   const showPrev = () =>
@@ -33,11 +38,7 @@ function Gallery() {
     };
 
     document.addEventListener("keydown", handleKey);
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", handleKey);
-      document.body.style.overflow = "";
-    };
+    return () => document.removeEventListener("keydown", handleKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lightboxIndex, filteredImages.length]);
 

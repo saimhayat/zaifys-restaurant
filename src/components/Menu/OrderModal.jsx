@@ -22,10 +22,15 @@ function OrderModal({ item, onClose }) {
 
   useEffect(() => {
     // Lock the body and every scroll ancestor so the page behind never scrolls.
+    // Read the offset BEFORE pinning: a fixed body always reports a rect top of
+    // 0, so measuring afterwards stores 0 and strands the customer at the very
+    // top of the page the moment the modal closes.
+    const restoreY = window.scrollY || document.documentElement.scrollTop || 0;
+
     const lockScroll = () => {
       document.body.style.overflow = "hidden";
       document.body.style.position = "fixed";
-      document.body.style.top = `-${document.body.getBoundingClientRect().top}px`;
+      document.body.style.top = `-${restoreY}px`;
 
       const lockAncestor = (el) => {
         if (el && el !== document.body && el.style.overflow !== "scroll" && el.scrollHeight > el.clientHeight) {
@@ -52,6 +57,15 @@ function OrderModal({ item, onClose }) {
       };
 
       unlockAncestor(document.body);
+
+      // Put the page back exactly where it was. The jump is forced to be
+      // instant because `scroll-behavior: smooth` would otherwise animate the
+      // whole way up from the top.
+      const root = document.documentElement;
+      const previousBehavior = root.style.scrollBehavior;
+      root.style.scrollBehavior = "auto";
+      window.scrollTo(0, restoreY);
+      root.style.scrollBehavior = previousBehavior;
     };
 
     lockScroll();

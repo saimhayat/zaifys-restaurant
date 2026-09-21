@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import { ArrowUp, MessageCircle, Phone } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ArrowUp, MessageCircle, Phone, ShoppingCart } from "lucide-react";
 import { useRestaurantInfo } from "../../store/restaurantStore";
+import { useCart } from "../../context/CartContext";
 import "./FloatingActions.css";
 
 function FloatingActions() {
   const restaurantInfo = useRestaurantInfo();
+  const { totalItems } = useCart();
   const [showTop, setShowTop] = useState(false);
 
   useEffect(() => {
@@ -20,7 +23,9 @@ function FloatingActions() {
 
   return (
     <>
-      {/* Desktop / all: floating WhatsApp + call stack */}
+      {/* Floating stack. The mobile bar below already carries Call and
+          WhatsApp, so the cart takes the floating slot instead of a second
+          WhatsApp button. */}
       <div className="fab-stack">
         {showTop && (
           <button
@@ -38,16 +43,22 @@ function FloatingActions() {
         >
           <Phone size={20} strokeWidth={2} />
         </a>
-        <a
-          href={waHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="fab fab--wa"
-          aria-label="Chat with us on WhatsApp"
+        <Link
+          to="/cart"
+          className="fab fab--cart"
+          aria-label={
+            totalItems > 0
+              ? `View cart, ${totalItems} item${totalItems === 1 ? "" : "s"}`
+              : "View cart"
+          }
         >
-          <MessageCircle size={22} strokeWidth={2} />
-          <span className="fab__pulse" aria-hidden="true" />
-        </a>
+          <ShoppingCart size={22} strokeWidth={2} />
+          {totalItems > 0 && (
+            <span className="fab__badge" aria-hidden="true">
+              {totalItems}
+            </span>
+          )}
+        </Link>
       </div>
 
       {/* Mobile sticky bottom action bar */}

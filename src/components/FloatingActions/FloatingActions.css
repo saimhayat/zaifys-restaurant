@@ -1,5 +1,5 @@
 /* ===================================================
-   FLOATING ACTIONS — WhatsApp/call stack, scroll-to-top,
+   FLOATING ACTIONS — call & cart stack, scroll-to-top,
    and the mobile sticky order bar
    =================================================== */
 
@@ -55,27 +55,33 @@
   box-shadow: 0 14px 30px -8px rgba(245, 179, 1, 0.5);
 }
 
-.fab--wa {
-  background: #25d366;
-  color: #ffffff;
+/* Cart — the house gold, matching the Order Now CTA. */
+.fab--cart {
+  background: var(--gradient-gold);
+  color: #1a1405;
 }
 
-.fab--wa:hover {
-  box-shadow: 0 14px 30px -8px rgba(37, 211, 102, 0.55);
+.fab--cart:hover {
+  box-shadow: 0 14px 30px -8px rgba(245, 179, 1, 0.5);
 }
 
-.fab__pulse {
+/* Inverted against the gold button underneath it: dark disc, gold numeral. */
+.fab__badge {
   position: absolute;
-  inset: 0;
+  top: -4px;
+  right: -4px;
+  min-width: 21px;
+  height: 21px;
+  padding: 0 0.3rem;
   border-radius: var(--radius-pill, 999px);
-  border: 2px solid #25d366;
-  animation: fab-pulse 2.2s ease-out infinite;
-  pointer-events: none;
-}
-
-@keyframes fab-pulse {
-  0% { transform: scale(1); opacity: 0.7; }
-  100% { transform: scale(1.45); opacity: 0; }
+  background: #1a1405;
+  color: var(--color-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.66rem;
+  font-weight: 800;
+  line-height: 1;
 }
 
 /* ---------- Mobile sticky action bar ---------- */
@@ -133,8 +139,8 @@
     padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
   }
 
-  /* Hide the redundant desktop stack's call button on mobile (bar covers it);
-     keep WhatsApp + back-to-top floating above the bar */
+  /* Hide the redundant desktop stack's call button on mobile (the bar covers
+     it); keep the cart + back-to-top floating above the bar */
   .fab-stack {
     bottom: calc(4.75rem + env(safe-area-inset-bottom));
   }
@@ -152,10 +158,6 @@
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .fab__pulse {
-    animation: none;
-    opacity: 0;
-  }
   .fab--small {
     animation: none;
   }

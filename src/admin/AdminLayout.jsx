@@ -23,8 +23,13 @@ import {
   OPEN_ORDER_STATUSES,
 } from "../store/restaurantStore";
 import { formatRs } from "./format";
+import { useBodyScrollLock } from "../hooks/useBodyScrollLock";
 
 const ALERTS_KEY = "zaify_admin_alerts";
+
+/* Matches the breakpoint where `admin.css` swaps the sidebar from a static
+   column to an off-canvas drawer. */
+const DRAWER_QUERY = "(max-width: 1024px)";
 
 function readAlertsEnabled() {
   if (typeof localStorage === "undefined") return true;
@@ -105,6 +110,38 @@ function AdminLayout() {
   const [alertsOn, setAlertsOn] = useState(readAlertsEnabled);
   const [toasts, setToasts] = useState([]);
   const timers = useRef(new Map());
+  // True while the sidebar is an off-canvas drawer rather than a static column.
+  const [drawerNav, setDrawerNav] = useState(
+    () => typeof window !== "undefined" && window.matchMedia(DRAWER_QUERY).matches
+  );
+
+  useEffect(() => {
+    const query = window.matchMedia(DRAWER_QUERY);
+    const sync = (event) => setDrawerNav(event.matches);
+    query.addEventListener("change", sync);
+    return () => query.removeEventListener("change", sync);
+  }, []);
+
+  // Rotating a phone or widening a window promotes the sidebar back to a
+  // static column — the drawer state has to go with it.
+  useEffect(() => {
+    if (!drawerNav) setNavOpen(false);
+  }, [drawerNav]);
+
+  // The open drawer is a modal surface, so the page behind it must not scroll.
+  useBodyScrollLock(navOpen && drawerNav);
+
+  // Escape closes it, exactly like the detail panel.
+  useEffect(() => {
+    if (!navOpen) return undefined;
+
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") setNavOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [navOpen]);
 
   // Seeded from whatever already exists, so opening the panel never fires an
   // alert for orders that were placed before now.
@@ -215,13 +252,21 @@ function AdminLayout() {
   return (
     <div className={`admin ${navOpen ? "admin--nav-open" : ""}`}>
       <div className="admin__shell">
-        <aside className="admin-sidebar">
+        <aside className="admin-sidebar" id="admin-nav">
           <div className="admin-brand">
             <span className="admin-brand__mark">Z</span>
             <div className="admin-brand__text">
               <strong>{settings.name}</strong>
               <span>Admin Panel</span>
             </div>
+            <button
+              type="button"
+              className="admin-sidebar__close"
+              onClick={() => setNavOpen(false)}
+              aria-label="Close navigation"
+            >
+              <X size={18} strokeWidth={2} />
+            </button>
           </div>
 
           <nav className="admin-nav">
@@ -279,6 +324,7 @@ function AdminLayout() {
               className="admin-hamburger"
               aria-label="Open navigation"
               aria-expanded={navOpen}
+              aria-controls="admin-nav"
               onClick={() => setNavOpen(true)}
             >
               <MenuIcon size={19} strokeWidth={2} />

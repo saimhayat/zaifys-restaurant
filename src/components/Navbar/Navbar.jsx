@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, X, ShoppingCart } from "lucide-react";
 import { scrollToSection } from "../../utils/scrollTo";
+import { useBodyScrollLock } from "../../hooks/useBodyScrollLock";
 import { PhoneIcon } from "../Icons";
 import ThemeToggle from "../ThemeToggle/ThemeToggle";
 import { useRestaurantInfo } from "../../store/restaurantStore";
@@ -42,15 +43,10 @@ function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [isOpen]);
-
-  useEffect(() => {
-    document.body.style.overflow = isLocationModalOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [isLocationModalOpen]);
+  // Both the menu drawer and the location modal cover the page, so the page
+  // behind them must not scroll. One lock for the pair — two effects writing
+  // the same property would hand it back too early when either one closed.
+  useBodyScrollLock(isOpen || isLocationModalOpen);
 
   useEffect(() => {
     const handleEsc = (e) => {

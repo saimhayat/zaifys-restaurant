@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Inbox, Search, X } from "lucide-react";
 import { formatRs, formatRsCompact } from "./format";
+import { useBodyScrollLock } from "../hooks/useBodyScrollLock";
 
 /**
  * Small presentational primitives shared by every admin section.
@@ -123,21 +124,17 @@ export function EmptyState({ title, message, action, icon: Icon = Inbox }) {
  * it behaves the same way the public order modal does.
  */
 export function Drawer({ open, title, subtitle, onClose, children, footer }) {
+  useBodyScrollLock(open);
+
   useEffect(() => {
     if (!open) return undefined;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
 
     const onKeyDown = (event) => {
       if (event.key === "Escape") onClose();
     };
     window.addEventListener("keydown", onKeyDown);
 
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", onKeyDown);
-    };
+    return () => window.removeEventListener("keydown", onKeyDown);
   }, [open, onClose]);
 
   if (!open) return null;
